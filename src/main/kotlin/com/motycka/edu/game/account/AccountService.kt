@@ -18,12 +18,11 @@ class AccountService(
     private val accountRepository: AccountRepository,
 ) {
 
-    fun getAccount(id: AccountId): Account {
-        logger.debug { "Getting user by id $id" }
-        return when {
-            getCurrentAccountId() != id -> null
-            else -> accountRepository.selectById(id = id)
-        } ?: throw UsernameNotFoundException(id.toString())
+    fun getAccount(): Account {
+        logger.debug { "Getting current user" }
+        val currentUserId = getCurrentAccountId()
+        return accountRepository.selectById(id = getCurrentAccountId())
+            ?: throw UsernameNotFoundException(currentUserId.toString())
     }
 
     fun getCurrentAccountId(): AccountId {

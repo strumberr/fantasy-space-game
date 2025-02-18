@@ -4,6 +4,8 @@ import com.motycka.edu.game.account.rest.AccountRegistrationRequest
 import com.motycka.edu.game.account.rest.AccountResponse
 import com.motycka.edu.game.account.rest.toAccount
 import com.motycka.edu.game.account.rest.toAccountResponse
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -20,20 +22,19 @@ class AccountController(
     private val accountService: AccountService
 ) {
 
-    @GetMapping("/{id}")
-    fun getAccount(
-        @PathVariable id: Long
-    ): AccountResponse {
-        return accountService.getAccount(id = id).toAccountResponse()
+    @GetMapping
+    fun getAccount(): AccountResponse {
+        return accountService.getAccount().toAccountResponse()
     }
 
     @PostMapping
     fun postAccount(
         @RequestBody account: AccountRegistrationRequest
-    ) {
-        accountService.createAccount(
+    ): ResponseEntity<AccountResponse?> {
+        val response = accountService.createAccount(
             account = account.toAccount()
-        )
+        ).toAccountResponse()
+        return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 
 }

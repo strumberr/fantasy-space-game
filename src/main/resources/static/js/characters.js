@@ -194,74 +194,63 @@ class CharactersTab {
         event.preventDefault();
         const form = event.target;
         const submitButton = form.querySelector('button[type="submit"]');
-        const errorDisplay = document.getElementById('formError');
-    
-        // Clear previous error
-        if (errorDisplay) {
-            errorDisplay.remove();
-        }
-    
-        const selectedClass = document.getElementById('characterClass').value;
-        if (!selectedClass) return;
-    
-        const formData = {
-            name: document.getElementById('name').value,
-            characterClass: selectedClass
-        };
-    
-        // Add class-specific properties
-        const properties = {};
-        Object.keys(CHARACTER_CLASSES[selectedClass].properties).forEach(prop => {
-            properties[prop] = parseInt(document.getElementById(prop).value);
-        });
-    
-        try {
-            // Validate total points
-            const totalPoints = Object.values(properties).reduce((sum, value) => sum + value, 0);
-            const level1Points = this.getPointsForLevel(1);
 
-            if (totalPoints !== level1Points) {
-                throw new Error(`Total points must equal ${level1Points}. Current total: ${totalPoints}`);
+        try {
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+
+            // Get form values directly
+            const characterData = {
+                name: form.querySelector('#name').value,
+                characterClass: form.querySelector('#characterClass').value,
+                health: parseInt(form.querySelector('input[name="health"]').value),
+                attackPower: parseInt(form.querySelector('input[name="attackPower"]').value)
+            };
+
+            // Add class-specific properties
+            if (characterData.characterClass === 'WARRIOR') {
+                characterData.stamina = parseInt(form.querySelector('input[name="stamina"]').value);
+                characterData.defensePower = parseInt(form.querySelector('input[name="defensePower"]').value);
+            } else if (characterData.characterClass === 'SORCERER') {
+                characterData.mana = parseInt(form.querySelector('input[name="mana"]').value);
+                characterData.healingPower = parseInt(form.querySelector('input[name="healingPower"]').value);
             }
 
-            // Add properties to form data
-            Object.assign(formData, properties);
+            console.log('Sending character data:', characterData); // Debug log
 
-            submitButton.disabled = true;
-            submitButton.textContent = 'Creating...';
-
-            await this.createCharacter(formData);
-            this.resetForm();
-            showToast('Character created successfully!');
+            const response = await this.createCharacter(characterData);
+            
+            // Close modal and reset form
+            const modal = bootstrap.Modal.getInstance(form.closest('.modal'));
+            modal.hide();
+            form.reset();
+            
             await this.loadCharacters();
+            showToast('Character created successfully!');
         } catch (error) {
             console.error('Error creating character:', error);
-    
-            // Display error message
-            const errorDiv = document.createElement('div');
-            errorDiv.id = 'formError';
-            errorDiv.className = 'alert alert-danger mt-3';
-            errorDiv.textContent = error.message;
-            form.querySelector('.modal-body').appendChild(errorDiv);
-    
-            showToast(error.message, true);
+            const message = error.message || 'Failed to create character';
+            showToast(message, true);
         } finally {
             submitButton.disabled = false;
-            submitButton.textContent = 'Create Character';
+            submitButton.innerHTML = '<i class="fas fa-meteor"></i> Launch into the Space';
         }
     }
 
-    async createCharacter(character) {
+    async createCharacter(characterData) {
+        console.log('Sending character data:', characterData); // Debug log
+        
         const response = await fetchWithAuth('/api/characters', {
             method: 'POST',
-            body: JSON.stringify(character),
+            body: JSON.stringify(characterData)
         });
-    
-        const data = await response.json();
-        if (!response.ok) {
-            throw new Error(data.message || 'Failed to create character');
+
+        // fetchWithAuth already parses JSON, so we can return the response directly
+        if (!response) {
+            throw new Error('Failed to create character');
         }
-        return data;
+
+        return response;
     }
 
     createCharacterElement(character) {
@@ -728,9 +717,9 @@ class CharactersTab {
         return { inputs, pointsDisplay };
     }
 
-    initializeCreateCharacterModal() {
+    async initializeCreateCharacterModal() {
         const modal = document.getElementById('createCharacterModal');
-        const form = modal.querySelector('form');
+        const form = modal.querySelector('#characterForm');  // Make sure to use the correct form ID
         const classSelect = form.querySelector('#characterClass');
         const pointsContainer = form.querySelector('#pointsContainer');
         
@@ -752,35 +741,12 @@ class CharactersTab {
 
             if (selectedClass) {
                 const character = { characterClass: selectedClass };
-                this.createPointDistributionForm(pointsContainer, character, 200); // LEVEL_1 points
+                this.createPointDistributionForm(pointsContainer, character, 200);
             }
         });
 
-        // Update form submission to include points
-        form.onsubmit = async (e) => {
-            e.preventDefault();
-            const formData = new FormData(form);
-            const data = {
-                name: formData.get('name'),
-                characterClass: formData.get('characterClass'),
-                properties: {}
-            };
-
-            // Add all numeric properties
-            form.querySelectorAll('input[type="number"]').forEach(input => {
-                data.properties[input.name] = parseInt(input.value);
-            });
-
-            try {
-                await this.createCharacter(data);
-                const bsModal = bootstrap.Modal.getInstance(modal);
-                bsModal.hide();
-                showToast('Character created successfully!');
-                await this.loadCharacters();
-            } catch (error) {
-                showToast(error.message, true);
-            }
-        };
+        // Connect the form submission handler
+        form.addEventListener('submit', (e) => this.handleSubmit(e));
     }
 }
 
