@@ -78,11 +78,11 @@ class MatchService(
 
         val matchOutcome = when {
             challenger.getStats().health <= 0 && opponent.getStats().health > 0 -> {
-                logger.info { ("\n${opponent.name} is the victor in round $round!") }
+                logger.info { ("${opponent.name} is the victor in round $round!") }
                 MatchOutcome.OPPONENT_WON
             }
             opponent.getStats().health <= 0 && challenger.getStats().health > 0 -> {
-                logger.info { "\n${challenger.name} is the victor in round $round!" }
+                logger.info { "${challenger.name} is the victor in round $round!" }
                 MatchOutcome.CHALLENGER_WON
             }
             else -> {
@@ -123,11 +123,11 @@ class MatchService(
 
         return MatchResultWithCharacters(
             challenger = challenger,
-            challengerExperience = challengerExperience,
             opponent = opponent,
-            opponentExperience = opponentExperience,
             match = matchResult,
             rounds = rounds,
+            challengerExperience = challengerExperience,
+            opponentExperience = opponentExperience,
             currentAccountId = accountService.getCurrentAccountId()
         )
     }

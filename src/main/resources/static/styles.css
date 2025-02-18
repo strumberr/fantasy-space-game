@@ -349,16 +349,18 @@ body {
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
+/* Update experience gained styling */
 .experience-gained {
-    font-size: 0.9rem;
     color: var(--success);
-    margin-left: 0.5rem;
-    font-weight: normal;
+    font-weight: 500;
+    text-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
+    animation: experienceGlow 2s infinite;
 }
 
-.experience-gained i {
-    font-size: 0.8rem;
-    margin-right: 0.25rem;
+@keyframes experienceGlow {
+    0% { text-shadow: 0 0 10px rgba(40, 167, 69, 0.3); }
+    50% { text-shadow: 0 0 15px rgba(40, 167, 69, 0.5); }
+    100% { text-shadow: 0 0 10px rgba(40, 167, 69, 0.3); }
 }
 
 .character-level {

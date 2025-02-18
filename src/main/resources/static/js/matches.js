@@ -206,53 +206,52 @@ class MatchesTab {
                 <table class="table leaderboard-table">
                     <thead class="cosmic-header">
                         <tr>
-                            <th scope="col">Challenger</th>
+                            <th scope="col" style="width: 300px">Challenger</th>
                             <th scope="col" class="text-center" colspan="3">Battle</th>
-                            <th scope="col">Opponent</th>
-                            <th scope="col" class="text-center">Rounds</th>
+                            <th scope="col" style="width: 300px">Opponent</th>
+                            <th scope="col" class="text-center" style="width: 100px">Rounds</th>
                         </tr>
                     </thead>
                     <tbody class="cosmic-body">
                         ${matches.map(match => {
-                            // Determine row class based on match result
-                            const rowClass = !match.challenger.isVictor && !match.opponent.isVictor 
-                                ? 'DRAW'  // For draws
-                                : match.challenger.isVictor 
-                                    ? match.challenger.characterClass  // Winner's class
-                                    : match.opponent.characterClass;   // Winner's class
+                            // Determine row class based on match outcome
+                            const rowClass = match.matchOutcome === 'DRAW' 
+                                ? 'DRAW'
+                                : match.matchOutcome === 'CHALLENGER_WON'
+                                    ? match.challenger.characterClass
+                                    : match.opponent.characterClass;
                             
                             // Determine battle outcome icons
                             let leftIcon = '', middleIcon = '', rightIcon = '';
-                            if (!match.challenger.isVictor && !match.opponent.isVictor) {
-                                // Draw
-                                leftIcon = '<span class="battle-icon"></span>';
-                                middleIcon = '<i class="fas fa-handshake text-warning"></i>';
-                                rightIcon = '<span class="battle-icon"></span>';
-                            } else if (match.challenger.isVictor) {
-                                // Challenger wins
-                                leftIcon = '<i class="fas fa-trophy text-success"></i>';
-                                middleIcon = 'VS';
-                                rightIcon = '<i class="fas fa-skull text-danger"></i>';
-                            } else {
-                                // Opponent wins
-                                leftIcon = '<i class="fas fa-skull text-danger"></i>';
-                                middleIcon = 'VS';
-                                rightIcon = '<i class="fas fa-trophy text-success"></i>';
+                            switch (match.matchOutcome) {
+                                case 'DRAW':
+                                    leftIcon = '<span class="battle-icon"></span>';
+                                    middleIcon = '<i class="fas fa-handshake text-warning"></i>';
+                                    rightIcon = '<span class="battle-icon"></span>';
+                                    break;
+                                case 'CHALLENGER_WON':
+                                    leftIcon = '<i class="fas fa-trophy text-success"></i>';
+                                    middleIcon = 'VS';
+                                    rightIcon = '<i class="fas fa-skull text-danger"></i>';
+                                    break;
+                                case 'OPPONENT_WON':
+                                    leftIcon = '<i class="fas fa-skull text-danger"></i>';
+                                    middleIcon = 'VS';
+                                    rightIcon = '<i class="fas fa-trophy text-success"></i>';
+                                    break;
                             }
 
                             return `
                                 <tr class="cosmic-row match-row" data-class="${rowClass}" style="cursor: pointer;">
                                     <td>
-                                        <div class="d-flex align-items-center gap-3">
+                                        <div class="d-flex align-items-center justify-content-between">
                                             <div class="d-flex align-items-center gap-2">
                                                 <span class="class-icon" title="${match.challenger.characterClass === 'WARRIOR' ? 'Warrior' : 'Sorcerer'}">
                                                     ${match.challenger.characterClass === 'WARRIOR' ? '⚔️' : '🔮'}
                                                 </span>
                                                 <span>${match.challenger.name}</span>
                                             </div>
-                                            <span class="experience-info" title="Experience Gained">
-                                                <i class="fas fa-star"></i> +${match.challenger.experienceGained}
-                                            </span>
+                                            <span class="experience-gained">+${match.challenger.experienceGained}</span>
                                         </div>
                                     </td>
                                     <td class="text-center battle-column">
@@ -265,16 +264,14 @@ class MatchesTab {
                                         <span class="battle-icon">${rightIcon}</span>
                                     </td>
                                     <td>
-                                        <div class="d-flex align-items-center gap-3">
+                                        <div class="d-flex align-items-center justify-content-between">
                                             <div class="d-flex align-items-center gap-2">
                                                 <span class="class-icon" title="${match.opponent.characterClass === 'WARRIOR' ? 'Warrior' : 'Sorcerer'}">
                                                     ${match.opponent.characterClass === 'WARRIOR' ? '⚔️' : '🔮'}
                                                 </span>
                                                 <span>${match.opponent.name}</span>
                                             </div>
-                                            <span class="experience-info" title="Experience Gained">
-                                                <i class="fas fa-star"></i> +${match.opponent.experienceGained}
-                                            </span>
+                                            <span class="experience-gained">+${match.opponent.experienceGained}</span>
                                         </div>
                                     </td>
                                     <td class="text-center">
@@ -373,6 +370,28 @@ class MatchesTab {
     displayMatchResult(match) {
         const modal = document.getElementById('matchResultModal');
 
+        const getBadgeClass = (isChallenger) => {
+            switch (match.matchOutcome) {
+                case 'DRAW': return 'bg-warning';
+                case 'CHALLENGER_WON': return isChallenger ? 'bg-success' : 'bg-danger';
+                case 'OPPONENT_WON': return isChallenger ? 'bg-danger' : 'bg-success';
+                default: return 'bg-secondary';
+            }
+        };
+
+        const getResultText = (isChallenger) => {
+            switch (match.matchOutcome) {
+                case 'DRAW': return '<i class="fas fa-handshake"></i> Draw';
+                case 'CHALLENGER_WON': return isChallenger 
+                    ? '<i class="fas fa-trophy"></i> Victor'
+                    : '<i class="fas fa-skull"></i> Defeated';
+                case 'OPPONENT_WON': return isChallenger
+                    ? '<i class="fas fa-skull"></i> Defeated'
+                    : '<i class="fas fa-trophy"></i> Victor';
+                default: return 'Unknown';
+            }
+        };
+
         modal.querySelector('.modal-body').innerHTML = `
             <div class="match-content">
                 <div class="match-summary mb-4">
@@ -384,12 +403,8 @@ class MatchesTab {
                                 </span>
                                 <h5 class="mb-0">${match.challenger.name}</h5>
                             </div>
-                            <div class="badge ${match.challenger.isVictor ? 'bg-success' : !match.opponent.isVictor ? 'bg-warning' : 'bg-danger'}">
-                                ${!match.challenger.isVictor && !match.opponent.isVictor 
-                                    ? '<i class="fas fa-handshake"></i> Draw'
-                                    : match.challenger.isVictor 
-                                        ? '<i class="fas fa-trophy"></i> Victor'
-                                        : '<i class="fas fa-skull"></i> Defeated'}
+                            <div class="badge ${getBadgeClass(true)}">
+                                ${getResultText(true)}
                             </div>
                             <div class="experience-info">
                                 <div class="d-flex align-items-center gap-2">
@@ -415,12 +430,8 @@ class MatchesTab {
                                 </span>
                                 <h5 class="mb-0">${match.opponent.name}</h5>
                             </div>
-                            <div class="badge ${match.opponent.isVictor ? 'bg-success' : !match.challenger.isVictor ? 'bg-warning' : 'bg-danger'}">
-                                ${!match.challenger.isVictor && !match.opponent.isVictor 
-                                    ? '<i class="fas fa-handshake"></i> Draw'
-                                    : match.opponent.isVictor 
-                                        ? '<i class="fas fa-trophy"></i> Victor'
-                                        : '<i class="fas fa-skull"></i> Defeated'}
+                            <div class="badge ${getBadgeClass(false)}">
+                                ${getResultText(false)}
                             </div>
                             <div class="experience-info">
                                 <div class="d-flex align-items-center gap-2">

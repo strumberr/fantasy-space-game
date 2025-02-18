@@ -5,10 +5,10 @@ import com.motycka.edu.game.account.model.AccountId
 
 data class MatchResultWithCharacters(
     val challenger: Character,
-    val challengerExperience: Int,
     val opponent: Character,
-    val opponentExperience: Int,
     val match: MatchResult,
     val rounds: List<MatchRoundResult>,
+    val challengerExperience: Int,
+    val opponentExperience: Int,
     val currentAccountId: AccountId
 )
