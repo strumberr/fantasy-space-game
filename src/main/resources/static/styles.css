@@ -1475,6 +1475,17 @@ body {
     opacity: 0.9;
 }
 
+.cosmic-form {
+    background: rgba(45, 27, 78, 0.4);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 3rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(107, 63, 160, 0.2);
+    max-width: 480px;
+    margin: 0 auto;
+}
+
 .cosmic-form .form-control {
     background: rgba(10, 5, 23, 0.6);
     border: 1px solid rgba(107, 63, 160, 0.3);
@@ -1524,8 +1535,8 @@ body {
 
 /* Add responsive margin for mobile */
 @media (max-width: 768px) {
-    .login-container {
+    .cosmic-form {
         padding: 2rem;
-        margin: 1rem;
+        margin: 1rem auto;
     }
 }

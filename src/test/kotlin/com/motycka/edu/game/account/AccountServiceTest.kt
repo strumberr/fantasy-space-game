@@ -10,7 +10,10 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.security.test.context.support.WithMockUser
+import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener
+import org.springframework.test.context.TestExecutionListeners
 
+@TestExecutionListeners(WithSecurityContextTestExecutionListener::class)
 class AccountServiceTest {
 
     private val accountRepository: AccountRepository = mockk()

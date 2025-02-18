@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
 
 @WebMvcTest(AccountController::class)
 class AccountControllerTest {
@@ -50,6 +51,7 @@ class AccountControllerTest {
     fun `postAccount should create account`() {
         mockMvc.perform(
             post("/api/accounts")
+                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(accountRegistrationRequest))
         )

@@ -1,6 +1,5 @@
 package com.motycka.edu.game.account
 
-import com.motycka.edu.game.account.model.Account
 import com.motycka.edu.game.account.rest.AccountRegistrationRequest
 import com.motycka.edu.game.account.rest.AccountResponse
 import com.motycka.edu.game.account.rest.toAccount
