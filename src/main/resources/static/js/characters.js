@@ -27,25 +27,10 @@ class CharactersTab {
     async initialize() {
         console.log('Initializing characters tab...');
         
-        // Initialize form and modals first
-        this.initializeForm();
-        this.characterModal = new bootstrap.Modal(document.getElementById('createCharacterModal'));
+        // Initialize modals
         this.levelUpModal = new bootstrap.Modal(document.getElementById('levelUpModal'));
         
-        // Add event listeners
-        const continueButton = document.getElementById('continueButton');
-        const classSelect = document.getElementById('characterClass');
-        const nameInput = document.getElementById('name');
-
-        // Enable continue button when both class and name are filled
-        const updateContinueButton = () => {
-            continueButton.disabled = !classSelect.value || !nameInput.value;
-        };
-
-        classSelect.addEventListener('change', updateContinueButton);
-        nameInput.addEventListener('input', updateContinueButton);
-        continueButton.addEventListener('click', () => this.handleClassSelection());
-
+        // Add tab change listener
         document.getElementById('characters-tab').addEventListener('shown.bs.tab', () => {
             console.log('Characters tab shown, reloading characters...');
             this.loadCharacters();
@@ -54,6 +39,13 @@ class CharactersTab {
         // Load characters immediately
         console.log('Loading initial characters...');
         await this.loadCharacters();
+        await this.initializeCreateCharacterModal();
+        
+        // Add event listener for create character button
+        document.getElementById('createCharacterBtn').addEventListener('click', () => {
+            const modal = new bootstrap.Modal(document.getElementById('createCharacterModal'));
+            modal.show();
+        });
     }
 
     async loadCharacters() {
@@ -99,21 +91,6 @@ class CharactersTab {
             const characterElement = this.createCharacterElement(character);
             listContainer.appendChild(characterElement);
         });
-    }
-
-    initializeForm() {
-        const classSelect = document.getElementById('characterClass');
-    
-        // Populate class selection
-        Object.entries(CHARACTER_CLASSES).forEach(([key, classData]) => {
-            const option = document.createElement('option');
-            option.value = key;
-            option.textContent = classData.name;
-            classSelect.appendChild(option);
-        });
-    
-        // Handle class selection change
-        classSelect.addEventListener('change', this.updatePropertyInputs.bind(this));
     }
 
     updatePropertyInputs() {
@@ -663,6 +640,149 @@ class CharactersTab {
                 showToast(error.message, true);
             }
         });
+    }
+
+    // Add this helper function to create the point distribution form
+    createPointDistributionForm(container, character, availablePoints, onSubmit) {
+        // Create properties row
+        const propertiesRow = document.createElement('div');
+        propertiesRow.className = 'd-flex gap-3 p-2';
+
+        // Add property inputs
+        const commonProps = COMMON_DISPLAY_PROPERTIES;
+        const classProps = CLASS_SPECIFIC_PROPERTIES[character.characterClass];
+        
+        [...commonProps, ...classProps].forEach(prop => {
+            const formGroup = document.createElement('div');
+            formGroup.className = 'flex-grow-1';
+            
+            const label = document.createElement('label');
+            label.className = 'form-label mb-1';
+            label.textContent = this.formatPropertyName(prop);
+            
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.className = 'form-control form-control-sm';
+            input.name = prop;
+            input.value = character[prop] || 0;
+            input.min = 0;
+            input.required = true;
+            input.placeholder = '0';
+            
+            formGroup.appendChild(label);
+            formGroup.appendChild(input);
+            propertiesRow.appendChild(formGroup);
+        });
+        
+        container.appendChild(propertiesRow);
+        
+        // Add points display
+        const pointsDisplay = document.createElement('div');
+        pointsDisplay.className = 'points-summary mt-3 mb-4';
+        pointsDisplay.innerHTML = `
+            <div class="points-row">
+                <span>Available Points:</span>
+                <span id="availablePoints">${availablePoints}</span>
+            </div>
+        `;
+        container.appendChild(pointsDisplay);
+        
+        // Add points validation
+        const inputs = container.querySelectorAll('input[type="number"]');
+        inputs.forEach(input => {
+            input.addEventListener('change', () => {
+                let used = 0;
+                inputs.forEach(input => {
+                    used += parseInt(input.value) || 0;
+                });
+                
+                const available = availablePoints - used;
+                container.querySelector('#availablePoints').textContent = available;
+                
+                const submitButton = container.closest('form').querySelector('button[type="submit"]');
+                submitButton.disabled = available !== 0;
+                
+                pointsDisplay.className = `points-summary mt-3 mb-4 ${
+                    available === 0 ? 'points-valid' : 
+                    available < 0 ? 'points-exceeded' : 
+                    'points-remaining'
+                }`;
+            });
+        });
+
+        // Add auto assign button
+        const autoAssignBtn = document.createElement('button');
+        autoAssignBtn.type = 'button';
+        autoAssignBtn.className = 'btn btn-cosmic-outline mb-3';
+        autoAssignBtn.innerHTML = '<i class="fas fa-magic"></i> Auto Assign';
+        autoAssignBtn.onclick = () => {
+            const inputCount = inputs.length;
+            const basePoints = Math.floor(availablePoints / inputCount);
+            let remaining = availablePoints % inputCount;
+            
+            inputs.forEach(input => {
+                input.value = basePoints + (remaining-- > 0 ? 1 : 0);
+                input.dispatchEvent(new Event('change'));
+            });
+        };
+        container.insertBefore(autoAssignBtn, pointsDisplay);
+
+        return { inputs, pointsDisplay };
+    }
+
+    initializeCreateCharacterModal() {
+        const modal = document.getElementById('createCharacterModal');
+        const form = modal.querySelector('form');
+        const classSelect = form.querySelector('#characterClass');
+        const pointsContainer = form.querySelector('#pointsContainer');
+        
+        // Add cosmic theme class
+        modal.querySelector('.modal-content').className = 'modal-content cosmic-modal';
+        
+        // Populate class options
+        Object.entries(CHARACTER_CLASSES).forEach(([value, data]) => {
+            const option = document.createElement('option');
+            option.value = value;
+            option.textContent = data.name;
+            classSelect.appendChild(option);
+        });
+
+        // Add point distribution section when class is selected
+        classSelect.addEventListener('change', () => {
+            const selectedClass = classSelect.value;
+            pointsContainer.innerHTML = ''; // Clear previous content
+
+            if (selectedClass) {
+                const character = { characterClass: selectedClass };
+                this.createPointDistributionForm(pointsContainer, character, 200); // LEVEL_1 points
+            }
+        });
+
+        // Update form submission to include points
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const data = {
+                name: formData.get('name'),
+                characterClass: formData.get('characterClass'),
+                properties: {}
+            };
+
+            // Add all numeric properties
+            form.querySelectorAll('input[type="number"]').forEach(input => {
+                data.properties[input.name] = parseInt(input.value);
+            });
+
+            try {
+                await this.createCharacter(data);
+                const bsModal = bootstrap.Modal.getInstance(modal);
+                bsModal.hide();
+                showToast('Character created successfully!');
+                await this.loadCharacters();
+            } catch (error) {
+                showToast(error.message, true);
+            }
+        };
     }
 }
 

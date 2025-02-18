@@ -143,34 +143,40 @@
         </div>
     </template>
 
-    <!-- Add the modal markup at the bottom of the body, before scripts -->
+    <!-- Create Character Modal -->
     <div class="modal fade" id="createCharacterModal" tabindex="-1" aria-labelledby="createCharacterModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content">
+            <div class="modal-content cosmic-modal">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="createCharacterModalLabel">Create New Character</h5>
+                    <div class="character-header">
+                        <h5 class="modal-title" id="createCharacterModalLabel">Create New Character</h5>
+                    </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="characterForm">
                     <div class="modal-body">
-                        <!-- Character Class Selection -->
-                        <div class="mb-3">
-                            <label for="characterClass" class="form-label">Character Class</label>
-                            <select id="characterClass" class="form-select" required>
-                                <option value="">Select a class...</option>
-                                <!-- Classes will be populated via JavaScript -->
-                            </select>
+                        <div class="mb-4">
+                            <!-- Basic Info Section -->
+                            <div class="d-flex gap-3">
+                                <div class="flex-grow-1">
+                                    <label for="characterClass" class="form-label">Character Class</label>
+                                    <select id="characterClass" class="form-select form-select-sm" required>
+                                        <option value="">Select a class...</option>
+                                    </select>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <label for="name" class="form-label">Character Name</label>
+                                    <input type="text" class="form-control form-control-sm" id="name" name="name" required>
+                                </div>
+                            </div>
                         </div>
-
-                        <!-- Basic Properties -->
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Character Name</label>
-                            <input type="text" id="name" class="form-control" required>
-                        </div>
+                        <!-- Points container will be added here -->
+                        <div id="pointsContainer"></div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" id="continueButton" disabled>Continue</button>
+                        <button type="submit" class="btn btn-cosmic" disabled>
+                            <i class="fas fa-rocket"></i> Launch into the Cosmos
+                        </button>
                     </div>
                 </form>
             </div>
