@@ -100,7 +100,7 @@ class LeaderboardTab {
                             const characterClass = CHARACTER_CLASSES[entry.character.characterClass];
                             const className = characterClass ? characterClass.name : entry.character.characterClass;
                             const totalMatches = entry.wins + entry.losses + entry.draws;
-                            const winRate = totalMatches > 0 ? ((entry.wins / totalMatches) * 100).toFixed(1) : 0;
+                            const winRate = totalMatches > 0 ? ((entry.wins / totalMatches) * 100).toFixed(1) : "0.0";
                             
                             return `
                                 <tr class="cosmic-row" data-class="${entry.character.characterClass}">
@@ -129,13 +129,13 @@ class LeaderboardTab {
                                     </td>
                                     <td>
                                         <div class="progress">
-                                            <div class="progress-bar" 
+                                            <div class="progress-bar ${winRate == 0 ? 'zero-rate' : ''}" 
                                                  role="progressbar" 
                                                  style="width: ${winRate}%"
                                                  aria-valuenow="${winRate}" 
                                                  aria-valuemin="0" 
                                                  aria-valuemax="100">
-                                                ${winRate}%
+                                                <span class="win-rate-text">${winRate}%</span>
                                             </div>
                                         </div>
                                     </td>

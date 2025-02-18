@@ -30,14 +30,14 @@ class CharactersTab {
         // Initialize modals
         this.levelUpModal = new bootstrap.Modal(document.getElementById('levelUpModal'));
         
-        // Wait for DOM to be ready before adding event listeners
-        document.addEventListener('DOMContentLoaded', () => {
-            // Add tab change listener
-            document.getElementById('characters-tab').addEventListener('shown.bs.tab', () => {
+        // Add tab change listener
+        const charactersTab = document.getElementById('characters-tab');
+        if (charactersTab) {
+            charactersTab.addEventListener('shown.bs.tab', () => {
                 console.log('Characters tab shown, reloading characters...');
                 this.loadCharacters();
             });
-        });
+        }
 
         // Load characters immediately
         console.log('Loading initial characters...');
@@ -477,7 +477,7 @@ class CharactersTab {
                         <i class="fas fa-magic"></i> Auto Assign
                     </button>
                     <button type="submit" class="btn btn-cosmic" disabled>
-                        <i class="fas fa-level-up-alt"></i> Level Up!
+                        <i class="fas fa-bolt"></i> Level Up!
                     </button>
                 </div>
             `;
