@@ -93,7 +93,7 @@ class LeaderboardTab {
                             <th scope="col">Name</th>
                             <th scope="col">Level</th>
                             <th scope="col">Experience</th>
-                            <th scope="col">W/L/D</th>
+                            <th scope="col">Win / Loss / Draw</th>
                             <th scope="col">Win Rate</th>
                         </tr>
                     </thead>
