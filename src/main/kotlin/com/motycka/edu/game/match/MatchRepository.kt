@@ -1,13 +1,13 @@
 package com.motycka.edu.game.match
 
 import com.motycka.edu.game.match.model.MatchId
+import com.motycka.edu.game.match.model.MatchOutcome
 import com.motycka.edu.game.match.model.MatchResult
 import com.motycka.edu.game.match.model.MatchRoundResult
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import java.sql.ResultSet
-import kotlin.collections.component1
 
 private val logger = KotlinLogging.logger {}
 
@@ -38,14 +38,14 @@ class MatchRepository(
         return jdbcTemplate.query(
             """
                 SELECT * FROM FINAL TABLE (
-                    INSERT INTO match (challenger_id, opponent_id, victor_id, challenger_xp, opponent_xp) 
+                    INSERT INTO match (challenger_id, opponent_id, match_outcome, challenger_xp, opponent_xp) 
                     VALUES (?, ?, ?, ?, ?)
                 ) LIMIT 1;
             """.trimIndent(),
             ::matchMapper,
             match.challengerId,
             match.opponentId,
-            match.victorId,
+            match.matchOutcome.name,
             match.challengerExperience,
             match.opponentExperience
         ).firstOrNull() ?: error("Match could not be created.") // TODO
@@ -74,7 +74,7 @@ class MatchRepository(
         val matchId = resultSet.getLong("id")
         val challengerId = resultSet.getLong("challenger_id")
         val opponentId = resultSet.getLong("opponent_id")
-        val victorId = resultSet.getLong("victor_id")
+        val matchOutcome = MatchOutcome.valueOf(resultSet.getString("match_outcome"))
         val challengerExperience = resultSet.getInt("challenger_xp")
         val opponentExperience = resultSet.getInt("opponent_xp")
         return MatchResult(
@@ -83,7 +83,7 @@ class MatchRepository(
             challengerExperience = challengerExperience,
             opponentId = opponentId,
             opponentExperience = opponentExperience,
-            victorId = victorId
+            matchOutcome = matchOutcome
         )
     }
 

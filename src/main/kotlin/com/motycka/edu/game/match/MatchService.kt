@@ -9,6 +9,7 @@ import com.motycka.edu.game.match.model.MatchResult
 import com.motycka.edu.game.match.model.MatchResultWithCharacters
 import com.motycka.edu.game.match.model.MatchRoundResult
 import com.motycka.edu.game.account.AccountService
+import com.motycka.edu.game.match.model.MatchOutcome
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -75,20 +76,20 @@ class MatchService(
             } else null
         }.flatten()
 
-        val victorId = when {
+        val matchOutcome = when {
             challenger.getStats().health <= 0 && opponent.getStats().health > 0 -> {
                 logger.info { ("\n${opponent.name} is the victor in round $round!") }
-                opponent
+                MatchOutcome.OPPONENT_WON
             }
             opponent.getStats().health <= 0 && challenger.getStats().health > 0 -> {
                 logger.info { "\n${challenger.name} is the victor in round $round!" }
-                challenger
+                MatchOutcome.CHALLENGER_WON
             }
             else -> {
                 logger.info { "\nIt's a draw!" }
-                null
+                MatchOutcome.DRAW
             }
-        }?.characterId
+        }
 
         val challengerExperience = 100
         val opponentExperience = 100
@@ -99,7 +100,7 @@ class MatchService(
                 challengerExperience = challengerExperience,
                 opponentId = opponent.characterId,
                 opponentExperience = opponentExperience,
-                victorId = victorId,
+                matchOutcome = matchOutcome
             )
         )
 
@@ -107,27 +108,18 @@ class MatchService(
             matchRepository.insertRound(matchResult.id!!, roundResult)
         }
 
-        // update stats
-        with (challenger) {
-            val isVictor = characterId == victorId
-            leaderboardService.updateLeaderboard(
-                characterId = characterId,
-                win = isVictor,
-                loss = !isVictor
-            )
-
-            characterService.updateExperience(characterId, challengerExperience)
-        }
-        with (opponent) {
-            val isVictor = characterId == victorId
-            leaderboardService.updateLeaderboard(
-                characterId = characterId,
-                win = isVictor,
-                loss = !isVictor
-            )
-
-            characterService.updateExperience(characterId, opponentExperience)
-        }
+        updateCharacter(
+            characterId = challenger.characterId,
+            win = matchOutcome == MatchOutcome.CHALLENGER_WON,
+            loss = matchOutcome == MatchOutcome.OPPONENT_WON,
+            gainedExperience = challengerExperience
+        )
+        updateCharacter(
+            characterId = opponent.characterId,
+            win = matchOutcome == MatchOutcome.OPPONENT_WON,
+            loss = matchOutcome == MatchOutcome.CHALLENGER_WON,
+            gainedExperience = opponentExperience
+        )
 
         return MatchResultWithCharacters(
             challenger = challenger,
@@ -179,4 +171,17 @@ class MatchService(
         )
     }
 
+    private fun updateCharacter(characterId: CharacterId, win: Boolean, loss: Boolean, gainedExperience: Int) {
+        leaderboardService.updateLeaderboard(
+            characterId = characterId,
+            win = win,
+            loss = loss
+        )
+        characterService.updateExperience(
+            characterId = characterId,
+            gainedExperience = gainedExperience
+        )
+    }
+
 }
+

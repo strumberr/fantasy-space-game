@@ -8,6 +8,6 @@ data class MatchResult(
     val challengerExperience: Int,
     val opponentId: CharacterId,
     val opponentExperience: Int,
-    val victorId: CharacterId?,
+    val matchOutcome: MatchOutcome,
 )
 

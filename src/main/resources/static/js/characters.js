@@ -385,6 +385,33 @@ class CharactersTab {
             const modal = document.getElementById('levelUpModal');
             const form = modal.querySelector('form');
             
+            // Calculate available points based on target level points
+            const LEVEL_POINTS = {
+                'LEVEL_1': 200,
+                'LEVEL_2': 210,
+                'LEVEL_3': 230,
+                'LEVEL_4': 260,
+                'LEVEL_5': 300,
+                'LEVEL_6': 350,
+                'LEVEL_7': 410,
+                'LEVEL_8': 480,
+                'LEVEL_9': 560,
+                'LEVEL_10': 650
+            };
+
+            // Calculate current total assigned points
+            const currentAssignedPoints = Object.entries(character).reduce((sum, [key, value]) => {
+                // Only sum up numeric values that are properties we care about
+                if ([...COMMON_DISPLAY_PROPERTIES, ...CLASS_SPECIFIC_PROPERTIES[character.characterClass]].includes(key)) {
+                    return sum + (parseInt(value) || 0);
+                }
+                return sum;
+            }, 0);
+
+            // Calculate points needed to reach next level's total
+            const nextLevelPoints = LEVEL_POINTS[`LEVEL_${nextLevel}`] || 0;
+            const availablePoints = nextLevelPoints - currentAssignedPoints;
+
             // Update character info
             const characterHeader = modal.querySelector('.modal-header');
             characterHeader.innerHTML = `
@@ -450,17 +477,30 @@ class CharactersTab {
             
             propertiesContainer.appendChild(propertiesRow);
             
-            // Add points display
+            // Update points display
             const pointsDisplay = document.createElement('div');
             pointsDisplay.className = 'points-summary mt-3 mb-4';
             pointsDisplay.innerHTML = `
                 <div class="points-row">
                     <span>Available Points:</span>
-                    <span id="availablePoints">${character.availablePoints}</span>
+                    <span id="availablePoints">${availablePoints}</span>
                 </div>
             `;
             modal.querySelector('#pointsDisplay').innerHTML = '';
             modal.querySelector('#pointsDisplay').appendChild(pointsDisplay);
+            
+            // Update modal footer
+            const modalFooter = modal.querySelector('.modal-footer');
+            modalFooter.innerHTML = `
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-cosmic-outline" onclick="autoLevelUp()">
+                        <i class="fas fa-magic"></i> Auto Assign
+                    </button>
+                    <button type="submit" class="btn btn-cosmic" disabled>
+                        <i class="fas fa-level-up-alt"></i> Level Up!
+                    </button>
+                </div>
+            `;
             
             // Handle form submission
             form.onsubmit = async (e) => {
@@ -476,43 +516,43 @@ class CharactersTab {
             
             // Update available points display when inputs change
             const inputs = form.querySelectorAll('input[type="number"]');
+            
             inputs.forEach(input => {
                 input.addEventListener('change', () => {
-                    const used = Array.from(inputs).reduce((sum, input) => {
+                    // Calculate total points used
+                    let used = 0;
+                    inputs.forEach(input => {
                         const currentValue = parseInt(input.value) || 0;
-                        const originalValue = character[input.name] || 0;
-                        return sum + (currentValue - originalValue);
-                    }, 0);
+                        const originalValue = parseInt(character[input.name]) || 0;
+                        used += currentValue - originalValue;
+                    });
                     
-                    const available = character.availablePoints - used;
+                    // Update display and validation
+                    const available = availablePoints - used;
                     modal.querySelector('#availablePoints').textContent = available;
-                    form.querySelector('button[type="submit"]').disabled = available !== 0;
-                    pointsDisplay.className = `points-summary mt-3 ${available === 0 ? 'points-valid' : available < 0 ? 'points-exceeded' : 'points-remaining'}`;
+                    
+                    // Disable submit button unless points are exactly used up
+                    const submitButton = form.querySelector('button[type="submit"]');
+                    submitButton.disabled = available !== 0;
+                    
+                    // Update points display styling
+                    pointsDisplay.className = `points-summary mt-3 mb-4 ${
+                        available === 0 ? 'points-valid' : 
+                        available < 0 ? 'points-exceeded' : 
+                        'points-remaining'
+                    }`;
                 });
             });
             
-            // Update modal footer
-            const modalFooter = modal.querySelector('.modal-footer');
-            modalFooter.innerHTML = `
-                <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-cosmic-outline" onclick="autoLevelUp()">
-                        <i class="fas fa-magic"></i> Auto Assign
-                    </button>
-                    <button type="submit" class="btn btn-cosmic" disabled>
-                        <i class="fas fa-level-up-alt"></i> Level Up!
-                    </button>
-                </div>
-            `;
-            
-            // Add the auto level up function
+            // Update auto level up function
             window.autoLevelUp = () => {
-                const availablePoints = character.availablePoints;
                 const inputCount = inputs.length;
                 const basePoints = Math.floor(availablePoints / inputCount);
                 let remaining = availablePoints % inputCount;
                 
                 inputs.forEach(input => {
-                    input.value = basePoints + (remaining-- > 0 ? 1 : 0);
+                    const currentValue = parseInt(character[input.name]) || 0;
+                    input.value = currentValue + basePoints + (remaining-- > 0 ? 1 : 0);
                     input.dispatchEvent(new Event('change'));
                 });
             };

@@ -10,6 +10,5 @@ data class MatchCharacterResponse(
     val characterClass: CharacterClass,
     val level: CharacterLevel,
     val experienceTotal: Int,
-    val experienceGained: Int,
-    val isVictor: Boolean
+    val experienceGained: Int
 )

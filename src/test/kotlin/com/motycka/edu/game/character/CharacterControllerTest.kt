@@ -1,5 +1,6 @@
 package com.motycka.edu.game.character
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.motycka.edu.game.account.AccountService
 import com.motycka.edu.game.character.model.CharacterLevel
 import com.motycka.edu.game.character.model.Warrior
@@ -26,6 +27,9 @@ class CharacterControllerTest {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
+
+    @Autowired
+    private lateinit var objectMapper: ObjectMapper
 
     @MockBean
     private lateinit var characterService: CharacterService
