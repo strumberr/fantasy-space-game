@@ -91,28 +91,51 @@ class MatchesTab {
     }
 
     updateFightButton() {
-        const challengerId = document.getElementById('challengerSelect').value;
-        const opponentId = document.getElementById('opponentSelect').value;
-        const fightButton = document.getElementById('fightButton');
         const challengerSelect = document.getElementById('challengerSelect');
         const opponentSelect = document.getElementById('opponentSelect');
+        const fightButton = document.getElementById('fightButton');
 
+        const challengerId = challengerSelect.value;
+        const opponentId = opponentSelect.value;
+
+        // Disable button if no selection or same character selected
         fightButton.disabled = !challengerId || !opponentId || challengerId === opponentId;
 
         // Update character stats displays
         if (challengerId) {
             const challenger = this.characters.challengers.find(c => c.id === challengerId);
-            this.displayCharacterStats('challenger', challenger);
-            challengerSelect.dataset.class = challenger.characterClass;
+            if (challenger) {
+                this.displayCharacterStats('challenger', challenger);
+                challengerSelect.dataset.class = challenger.characterClass;
+            }
         } else {
             delete challengerSelect.dataset.class;
         }
+
         if (opponentId) {
             const opponent = this.characters.opponents.find(c => c.id === opponentId);
-            this.displayCharacterStats('opponent', opponent);
-            opponentSelect.dataset.class = opponent.characterClass;
+            if (opponent) {
+                this.displayCharacterStats('opponent', opponent);
+                opponentSelect.dataset.class = opponent.characterClass;
+            }
         } else {
             delete opponentSelect.dataset.class;
+        }
+
+        // Update fight button text
+        if (!challengerId || !opponentId) {
+            fightButton.innerHTML = '<i class="fas fa-swords"></i> Select Characters';
+        } else if (challengerId === opponentId) {
+            fightButton.innerHTML = '<i class="fas fa-swords"></i> Select Different Characters';
+        } else {
+            const challenger = this.characters.challengers.find(c => c.id === challengerId);
+            const opponent = this.characters.opponents.find(c => c.id === opponentId);
+            if (challenger && opponent) {
+                fightButton.innerHTML = `
+                    <i class="fas fa-swords"></i>
+                    ${challenger.name} vs ${opponent.name}
+                `;
+            }
         }
     }
 
@@ -231,12 +254,12 @@ class MatchesTab {
                                     break;
                                 case 'CHALLENGER_WON':
                                     leftIcon = '<i class="fas fa-trophy text-success"></i>';
-                                    middleIcon = 'VS';
+                                    middleIcon = '';
                                     rightIcon = '<i class="fas fa-skull text-danger"></i>';
                                     break;
                                 case 'OPPONENT_WON':
                                     leftIcon = '<i class="fas fa-skull text-danger"></i>';
-                                    middleIcon = 'VS';
+                                    middleIcon = '';
                                     rightIcon = '<i class="fas fa-trophy text-success"></i>';
                                     break;
                             }
@@ -275,9 +298,7 @@ class MatchesTab {
                                         </div>
                                     </td>
                                     <td class="text-center">
-                                        <span class="rounds-info">
-                                            <i class="fas fa-clock"></i> ${match.rounds.length}
-                                        </span>
+                                        ${match.rounds.length}
                                     </td>
                                 </tr>
                             `;
@@ -419,8 +440,7 @@ class MatchesTab {
                         </div>
                         
                         <div class="match-vs">
-                            <span>VS</span>
-                            <span class="rounds-info"><i class="fas fa-clock"></i> ${match.rounds.length}</span>
+                            <span>${match.rounds.length}</span>
                         </div>
                         
                         <div class="opponent" data-class="${match.opponent.characterClass}">
