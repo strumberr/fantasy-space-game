@@ -108,7 +108,9 @@ class LeaderboardTab {
                                         ${index < 3 ? `🏆 ${index + 1}` : (index + 1)}
                                     </td>
                                     <td>
-                                        ${entry.character.characterClass === 'WARRIOR' ? '⚔️' : '🔮'}
+                                        <span class="class-icon" title="${entry.character.characterClass === 'WARRIOR' ? 'Warrior' : 'Sorcerer'}">
+                                            ${entry.character.characterClass === 'WARRIOR' ? '⚔️' : '🔮'}
+                                        </span>
                                         ${className}
                                     </td>
                                     <td>${entry.character.name}</td>

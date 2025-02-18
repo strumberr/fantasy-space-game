@@ -96,7 +96,7 @@
                  aria-labelledby="matches-tab">
                 <div class="tab-actions d-flex justify-content-end mb-4">
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newMatchModal">
-                        <i class="fas fa-gamepad"></i> New Match
+                        <i class="fas fa-fire"></i> New Match
                     </button>
                 </div>
                 
@@ -145,7 +145,7 @@
 
     <!-- Create Character Modal -->
     <div class="modal fade" id="createCharacterModal" tabindex="-1" aria-labelledby="createCharacterModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content cosmic-modal">
                 <div class="modal-header">
                     <div class="character-header">
@@ -155,28 +155,30 @@
                 </div>
                 <form id="characterForm">
                     <div class="modal-body">
+                        <!-- Character Name -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Character Name</label>
+                            <input type="text" class="form-control form-control-sm" id="name" name="name" required>
+                        </div>
+                        <!-- Character Class -->
                         <div class="mb-4">
-                            <!-- Basic Info Section -->
-                            <div class="d-flex gap-3">
-                                <div class="flex-grow-1">
-                                    <label for="characterClass" class="form-label">Character Class</label>
-                                    <select id="characterClass" class="form-select form-select-sm" required>
-                                        <option value="">Select a class...</option>
-                                    </select>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <label for="name" class="form-label">Character Name</label>
-                                    <input type="text" class="form-control form-control-sm" id="name" name="name" required>
-                                </div>
-                            </div>
+                            <label for="characterClass" class="form-label">Character Class</label>
+                            <select id="characterClass" class="form-select form-select-sm" required>
+                                <option value="">Select a class...</option>
+                            </select>
                         </div>
                         <!-- Points container will be added here -->
                         <div id="pointsContainer"></div>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-cosmic" disabled>
-                            <i class="fas fa-rocket"></i> Launch into the Cosmos
-                        </button>
+                        <div class="d-flex gap-2 ms-auto">
+                            <button type="button" class="btn btn-cosmic-outline" onclick="autoLevelUp()">
+                                <i class="fas fa-magic"></i> Auto Assign
+                            </button>
+                            <button type="submit" class="btn btn-cosmic" disabled>
+                                <i class="fas fa-meteor"></i> Launch into the Realm
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>

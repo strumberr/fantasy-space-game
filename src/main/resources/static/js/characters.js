@@ -30,10 +30,13 @@ class CharactersTab {
         // Initialize modals
         this.levelUpModal = new bootstrap.Modal(document.getElementById('levelUpModal'));
         
-        // Add tab change listener
-        document.getElementById('characters-tab').addEventListener('shown.bs.tab', () => {
-            console.log('Characters tab shown, reloading characters...');
-            this.loadCharacters();
+        // Wait for DOM to be ready before adding event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add tab change listener
+            document.getElementById('characters-tab').addEventListener('shown.bs.tab', () => {
+                console.log('Characters tab shown, reloading characters...');
+                this.loadCharacters();
+            });
         });
 
         // Load characters immediately
@@ -310,7 +313,7 @@ class CharactersTab {
         // Update class display to use icon with tooltip
         const classIcon = document.createElement('span');
         classIcon.className = 'class-icon';
-        classIcon.setAttribute('title', CHARACTER_CLASSES[character.characterClass].name);
+        classIcon.setAttribute('title', character.characterClass === 'WARRIOR' ? 'Warrior' : 'Sorcerer');
         classIcon.innerHTML = character.characterClass === 'WARRIOR' ? '⚔️' : '🔮';
         
         // Add the icon before the character name
@@ -394,7 +397,7 @@ class CharactersTab {
             characterHeader.innerHTML = `
                 <div class="character-header">
                     <div class="d-flex align-items-center gap-2">
-                        <span class="class-icon">
+                        <span class="class-icon" title="${character.characterClass === 'WARRIOR' ? 'Warrior' : 'Sorcerer'}">
                             ${character.characterClass === 'WARRIOR' ? '⚔️' : '🔮'}
                         </span>
                         <h5 class="character-name mb-0">${character.name}</h5>
@@ -678,7 +681,7 @@ class CharactersTab {
         
         // Add points display
         const pointsDisplay = document.createElement('div');
-        pointsDisplay.className = 'points-summary mt-3 mb-4';
+        pointsDisplay.className = 'points-summary mt-3';
         pointsDisplay.innerHTML = `
             <div class="points-row">
                 <span>Available Points:</span>
@@ -702,7 +705,7 @@ class CharactersTab {
                 const submitButton = container.closest('form').querySelector('button[type="submit"]');
                 submitButton.disabled = available !== 0;
                 
-                pointsDisplay.className = `points-summary mt-3 mb-4 ${
+                pointsDisplay.className = `points-summary mt-3 ${
                     available === 0 ? 'points-valid' : 
                     available < 0 ? 'points-exceeded' : 
                     'points-remaining'
@@ -710,12 +713,8 @@ class CharactersTab {
             });
         });
 
-        // Add auto assign button
-        const autoAssignBtn = document.createElement('button');
-        autoAssignBtn.type = 'button';
-        autoAssignBtn.className = 'btn btn-cosmic-outline mb-3';
-        autoAssignBtn.innerHTML = '<i class="fas fa-magic"></i> Auto Assign';
-        autoAssignBtn.onclick = () => {
+        // Set up auto assign function
+        window.autoLevelUp = () => {
             const inputCount = inputs.length;
             const basePoints = Math.floor(availablePoints / inputCount);
             let remaining = availablePoints % inputCount;
@@ -725,7 +724,6 @@ class CharactersTab {
                 input.dispatchEvent(new Event('change'));
             });
         };
-        container.insertBefore(autoAssignBtn, pointsDisplay);
 
         return { inputs, pointsDisplay };
     }

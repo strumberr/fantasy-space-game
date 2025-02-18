@@ -343,7 +343,7 @@ class MatchesTab {
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="challenger" data-class="${match.challenger.characterClass}">
                             <div class="d-flex align-items-center gap-2 mb-1">
-                                <span class="class-icon" title="${CHARACTER_CLASSES[match.challenger.characterClass].name}">
+                                <span class="class-icon" title="${match.challenger.characterClass === 'WARRIOR' ? 'Warrior' : 'Sorcerer'}">
                                     ${match.challenger.characterClass === 'WARRIOR' ? '⚔️' : '🔮'}
                                 </span>
                                 <h5 class="mb-0">${match.challenger.name}</h5>
@@ -370,7 +370,7 @@ class MatchesTab {
                         
                         <div class="opponent" data-class="${match.opponent.characterClass}">
                             <div class="d-flex align-items-center gap-2 mb-1">
-                                <span class="class-icon" title="${CHARACTER_CLASSES[match.opponent.characterClass].name}">
+                                <span class="class-icon" title="${match.opponent.characterClass === 'WARRIOR' ? 'Warrior' : 'Sorcerer'}">
                                     ${match.opponent.characterClass === 'WARRIOR' ? '⚔️' : '🔮'}
                                 </span>
                                 <h5 class="mb-0">${match.opponent.name}</h5>
