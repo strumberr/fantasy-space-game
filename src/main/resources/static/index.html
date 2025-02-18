@@ -159,12 +159,13 @@
                                 <option value="">Select a class...</option>
                             </select>
                         </div>
-                        <!-- Points container will be added here -->
+                        <!-- Add this div for dynamic properties -->
+                        <div id="dynamicProperties"></div>
                         <div id="pointsContainer"></div>
                     </div>
                     <div class="modal-footer">
                         <div class="d-flex gap-2 ms-auto">
-                            <button type="button" class="btn btn-cosmic-outline" onclick="autoLevelUp()">
+                            <button type="button" class="btn btn-cosmic-outline" id="autoAssignBtn">
                                 <i class="fas fa-magic"></i> Auto Assign
                             </button>
                             <button type="submit" class="btn btn-cosmic" disabled>

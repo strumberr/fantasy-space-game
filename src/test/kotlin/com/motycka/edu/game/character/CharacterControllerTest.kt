@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.motycka.edu.game.account.AccountService
 import com.motycka.edu.game.character.model.CharacterLevel
 import com.motycka.edu.game.character.model.Warrior
-import com.motycka.edu.game.config.TestSecurityConfiguration
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.context.annotation.Import
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
@@ -22,7 +20,6 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic
 
 @WebMvcTest(CharacterController::class)
-@Import(TestSecurityConfiguration::class)
 class CharacterControllerTest {
 
     @Autowired

@@ -2,6 +2,7 @@ package com.motycka.edu.game.account
 
 import com.motycka.edu.game.account.AccountFixtures.DEVELOPER
 import com.motycka.edu.game.account.AccountFixtures.UNKNOWN
+import com.motycka.edu.game.config.SecurityContextHolderHelper
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -10,10 +11,7 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.security.test.context.support.WithMockUser
-import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener
-import org.springframework.test.context.TestExecutionListeners
 
-@TestExecutionListeners(WithSecurityContextTestExecutionListener::class)
 class AccountServiceTest {
 
     private val accountRepository: AccountRepository = mockk()
@@ -23,9 +21,19 @@ class AccountServiceTest {
 
     @BeforeEach
     fun setUp() {
+        SecurityContextHolderHelper.setSecurityContext(DEVELOPER)
         every { accountRepository.selectByUsername(DEVELOPER.username) } returns DEVELOPER
         every { accountRepository.selectByUsername(UNKNOWN) } returns null
     }
+
+//    @BeforeEach
+//    fun setUp() {
+//        SecurityContextHolder.setContext(
+//            SecurityContextHolder.createEmptyContext()
+//        )
+//        every { accountRepository.selectByUsername(DEVELOPER.username) } returns DEVELOPER
+//        every { accountRepository.selectByUsername(UNKNOWN) } returns null
+//    }
 
     @Test
     fun `getByUsername should return account when found`() {

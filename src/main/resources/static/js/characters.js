@@ -22,6 +22,9 @@ class CharactersTab {
         } else {
             this.initialize();
         }
+
+        // Make autoLevelUp available globally
+        window.autoLevelUp = () => this.autoLevelUp();
     }
 
     async initialize() {
@@ -475,12 +478,24 @@ class CharactersTab {
             form.onsubmit = async (e) => {
                 e.preventDefault();
                 const formData = new FormData(form);
-                const properties = {};
-                formData.forEach((value, key) => {
-                    properties[key] = parseInt(value);
-                });
                 
-                await callback(properties);
+                // Create a flat structure matching the backend expectations
+                const updateData = {
+                    name: character.name,
+                    characterClass: character.characterClass
+                };
+
+                // Add all properties directly to the root object
+                formData.forEach((value, key) => {
+                    updateData[key] = parseInt(value);
+                });
+
+                try {
+                    await callback(updateData);
+                    levelUpModal.hide();
+                } catch (error) {
+                    showToast(error.message, true);
+                }
             };
             
             // Update available points display when inputs change
@@ -592,134 +607,9 @@ class CharactersTab {
         return propertyItem;
     }
 
-    handleClassSelection() {
-        const selectedClass = document.getElementById('characterClass').value;
-        const characterName = document.getElementById('name').value;
-        
-        if (!selectedClass || !characterName) return;
-        
-        // Create initial character with default values
-        const classData = CHARACTER_CLASSES[selectedClass];
-        const character = {
-            name: characterName,
-            characterClass: selectedClass,
-            availablePoints: 10, // Initial points for new character
-            level: 1
-        };
-        
-        // Hide the character creation modal
-        this.characterModal.hide();
-        
-        // Update modal title for character creation
-        const modal = document.getElementById('levelUpModal');
-        const modalTitle = modal.querySelector('.modal-title');
-        modalTitle.textContent = 'Assign Initial Character Points';
-        
-        // Show the points assignment dialog
-        this.showPointsAssignmentDialog(character, null, async (properties) => {
-            try {
-                const formData = {
-                    name: character.name,
-                    characterClass: character.characterClass,
-                    properties: properties
-                };
-                
-                await this.createCharacter(formData);
-                this.levelUpModal.hide();
-                showToast('Character created successfully!');
-                await this.loadCharacters();
-            } catch (error) {
-                showToast(error.message, true);
-            }
-        });
-    }
-
-    // Add this helper function to create the point distribution form
-    createPointDistributionForm(container, character, availablePoints, onSubmit) {
-        // Create properties row
-        const propertiesRow = document.createElement('div');
-        propertiesRow.className = 'd-flex gap-3 p-2';
-
-        // Add property inputs
-        const commonProps = COMMON_DISPLAY_PROPERTIES;
-        const classProps = CLASS_SPECIFIC_PROPERTIES[character.characterClass];
-        
-        [...commonProps, ...classProps].forEach(prop => {
-            const formGroup = document.createElement('div');
-            formGroup.className = 'flex-grow-1';
-            
-            const label = document.createElement('label');
-            label.className = 'form-label mb-1';
-            label.textContent = this.formatPropertyName(prop);
-            
-            const input = document.createElement('input');
-            input.type = 'number';
-            input.className = 'form-control form-control-sm';
-            input.name = prop;
-            input.value = character[prop] || 0;
-            input.min = 0;
-            input.required = true;
-            input.placeholder = '0';
-            
-            formGroup.appendChild(label);
-            formGroup.appendChild(input);
-            propertiesRow.appendChild(formGroup);
-        });
-        
-        container.appendChild(propertiesRow);
-        
-        // Add points display
-        const pointsDisplay = document.createElement('div');
-        pointsDisplay.className = 'points-summary mt-3';
-        pointsDisplay.innerHTML = `
-            <div class="points-row">
-                <span>Available Points:</span>
-                <span id="availablePoints">${availablePoints}</span>
-            </div>
-        `;
-        container.appendChild(pointsDisplay);
-        
-        // Add points validation
-        const inputs = container.querySelectorAll('input[type="number"]');
-        inputs.forEach(input => {
-            input.addEventListener('change', () => {
-                let used = 0;
-                inputs.forEach(input => {
-                    used += parseInt(input.value) || 0;
-                });
-                
-                const available = availablePoints - used;
-                container.querySelector('#availablePoints').textContent = available;
-                
-                const submitButton = container.closest('form').querySelector('button[type="submit"]');
-                submitButton.disabled = available !== 0;
-                
-                pointsDisplay.className = `points-summary mt-3 ${
-                    available === 0 ? 'points-valid' : 
-                    available < 0 ? 'points-exceeded' : 
-                    'points-remaining'
-                }`;
-            });
-        });
-
-        // Set up auto assign function
-        window.autoLevelUp = () => {
-            const inputCount = inputs.length;
-            const basePoints = Math.floor(availablePoints / inputCount);
-            let remaining = availablePoints % inputCount;
-            
-            inputs.forEach(input => {
-                input.value = basePoints + (remaining-- > 0 ? 1 : 0);
-                input.dispatchEvent(new Event('change'));
-            });
-        };
-
-        return { inputs, pointsDisplay };
-    }
-
     async initializeCreateCharacterModal() {
         const modal = document.getElementById('createCharacterModal');
-        const form = modal.querySelector('#characterForm');  // Make sure to use the correct form ID
+        const form = modal.querySelector('#characterForm');
         const classSelect = form.querySelector('#characterClass');
         const pointsContainer = form.querySelector('#pointsContainer');
         
@@ -740,13 +630,34 @@ class CharactersTab {
             pointsContainer.innerHTML = ''; // Clear previous content
 
             if (selectedClass) {
-                const character = { characterClass: selectedClass };
-                this.createPointDistributionForm(pointsContainer, character, 200);
+                this.updatePropertyInputs(); // Use existing method to update inputs
             }
         });
 
         // Connect the form submission handler
         form.addEventListener('submit', (e) => this.handleSubmit(e));
+
+        // Add auto assign button handler
+        const autoAssignBtn = modal.querySelector('#autoAssignBtn');
+        if (autoAssignBtn) {
+            autoAssignBtn.addEventListener('click', () => this.autoLevelUp());
+        }
+    }
+
+    // Add this method to the class
+    autoLevelUp() {
+        const form = document.getElementById('characterForm');
+        const inputs = form.querySelectorAll('input[type="number"]');
+        const availablePoints = 200; // Initial points for new character
+
+        const inputCount = inputs.length;
+        const basePoints = Math.floor(availablePoints / inputCount);
+        let remaining = availablePoints % inputCount;
+        
+        inputs.forEach(input => {
+            input.value = basePoints + (remaining-- > 0 ? 1 : 0);
+            input.dispatchEvent(new Event('change'));
+        });
     }
 }
 
