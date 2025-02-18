@@ -694,6 +694,14 @@ body {
     border-left: 4px solid rgba(74, 144, 226, 0.6);
 }
 
+.leaderboard-table .cosmic-row[data-class="DRAW"] {
+    background: linear-gradient(90deg, 
+        rgba(107, 63, 160, 0.15) 0%,
+        rgba(45, 27, 78, 0.3) 100%
+    ) !important;
+    border-left: 4px solid rgba(107, 63, 160, 0.6);
+}
+
 .leaderboard-table .cosmic-row:hover {
     background: linear-gradient(90deg, 
         rgba(107, 63, 160, 0.25) 0%,
@@ -966,30 +974,32 @@ body {
     content: none;
 }
 
+/* Update experience info styling */
 .experience-info {
-    color: var(--nebula-glow);
-    font-size: 0.9rem;
-    margin-top: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     padding: 0.25rem 0.75rem;
     background: rgba(107, 63, 160, 0.1);
     border-radius: 4px;
-    display: inline-block;
-}
-
-.experience-info .text-success {
-    color: var(--success) !important;
-    font-weight: 500;
-}
-
-.experience-info span {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
+    color: var(--success);
+    text-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
 }
 
 .experience-info i {
-    font-size: 0.8rem;
-    opacity: 0.9;
+    color: var(--success);
+    font-size: 0.9rem;
+}
+
+/* Add animation for the experience gained */
+.experience-info {
+    animation: experienceGlow 2s infinite;
+}
+
+@keyframes experienceGlow {
+    0% { text-shadow: 0 0 10px rgba(40, 167, 69, 0.3); }
+    50% { text-shadow: 0 0 15px rgba(40, 167, 69, 0.5); }
+    100% { text-shadow: 0 0 10px rgba(40, 167, 69, 0.3); }
 }
 
 /* Match result modal close button */
@@ -1334,4 +1344,81 @@ body {
     0% { opacity: 0.7; }
     50% { opacity: 1; }
     100% { opacity: 0.7; }
+}
+
+/* Match table specific styles */
+.match-row:hover {
+    background: linear-gradient(90deg, 
+        rgba(107, 63, 160, 0.25) 0%,
+        rgba(45, 27, 78, 0.4) 100%
+    ) !important;
+}
+
+.rounds-info {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    background: rgba(107, 63, 160, 0.1);
+    border-radius: 4px;
+    color: var(--nebula-glow);
+}
+
+.rounds-info i {
+    color: var(--nebula-blue);
+    font-size: 0.9rem;
+}
+
+.result-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+.result-icon i {
+    font-size: 1.1rem;
+}
+
+.result-icon .fa-trophy {
+    text-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+}
+
+.result-icon .fa-skull {
+    animation: pulse 2s infinite;
+}
+
+.result-icon .fa-handshake {
+    text-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+}
+
+/* Battle columns styling */
+.battle-column {
+    width: 50px;
+    background: rgba(10, 5, 23, 0.3) !important;
+    border-left: 1px solid rgba(107, 63, 160, 0.1) !important;
+    border-right: 1px solid rgba(107, 63, 160, 0.1) !important;
+}
+
+.battle-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    font-size: 1.1rem;
+    color: var(--nebula-glow);
+}
+
+.battle-icon .fa-trophy {
+    text-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+}
+
+.battle-icon .fa-skull {
+    animation: pulse 2s infinite;
+}
+
+.battle-icon .fa-handshake {
+    text-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
 }

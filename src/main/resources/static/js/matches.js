@@ -188,89 +188,117 @@ class MatchesTab {
     }
 
     displayMatches(matches) {
-        const listContainer = document.getElementById('matchesList');
-        listContainer.innerHTML = '';
-
-        if (matches.length === 0) {
-            listContainer.innerHTML = `
+        const matchesList = document.getElementById('matchesList');
+        
+        if (!matches || matches.length === 0) {
+            matchesList.innerHTML = `
                 <div class="empty-state">
-                    <i class="fas fa-galaxy fa-3x"></i>
-                    <p>The cosmic arena awaits its first battle...</p>
-                    <small>Create a match to begin your legend</small>
+                    <i class="fas fa-sword-cross fa-3x"></i>
+                    <p>No matches yet</p>
+                    <small>Start a new match to begin your journey!</small>
                 </div>
             `;
             return;
         }
 
-        matches.forEach(match => {
-            const matchElement = this.createMatchElement(match);
-            listContainer.appendChild(matchElement);
-        });
-    }
-
-    createMatchElement(match) {
-        const div = document.createElement('div');
-        div.className = 'match-item card mb-3';
-        div.innerHTML = `
-            <div class="card-body">
-                <div class="match-participants d-flex justify-content-between align-items-center">
-                    <div class="character-header d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="class-icon" title="${CHARACTER_CLASSES[match.challenger.characterClass].name}">
-                                ${match.challenger.characterClass === 'WARRIOR' ? '⚔️' : '🔮'}
-                            </span>
-                            <h6 class="character-name mb-0">
-                                ${match.challenger.name}
-                                <span class="experience-gained">
-                                    <i class="fas fa-star"></i> +${match.challenger.experienceGained}
-                                </span>
-                            </h6>
-                        </div>
-                        <span class="badge ms-3 ${match.challenger.isVictor ? 'bg-success' : !match.opponent.isVictor ? 'bg-warning' : 'bg-danger'}">
-                            ${!match.challenger.isVictor && !match.opponent.isVictor 
-                                ? '<i class="fas fa-handshake"></i> Draw'
+        matchesList.innerHTML = `
+            <div class="table-responsive">
+                <table class="table leaderboard-table">
+                    <thead class="cosmic-header">
+                        <tr>
+                            <th scope="col">Challenger</th>
+                            <th scope="col" class="text-center" colspan="3">Battle</th>
+                            <th scope="col">Opponent</th>
+                            <th scope="col" class="text-center">Rounds</th>
+                        </tr>
+                    </thead>
+                    <tbody class="cosmic-body">
+                        ${matches.map(match => {
+                            // Determine row class based on match result
+                            const rowClass = !match.challenger.isVictor && !match.opponent.isVictor 
+                                ? 'DRAW'  // For draws
                                 : match.challenger.isVictor 
-                                    ? '<i class="fas fa-trophy"></i> Victor'
-                                    : '<i class="fas fa-skull"></i> Defeated'}
-                        </span>
-                    </div>
+                                    ? match.challenger.characterClass  // Winner's class
+                                    : match.opponent.characterClass;   // Winner's class
+                            
+                            // Determine battle outcome icons
+                            let leftIcon = '', middleIcon = '', rightIcon = '';
+                            if (!match.challenger.isVictor && !match.opponent.isVictor) {
+                                // Draw
+                                leftIcon = '<span class="battle-icon"></span>';
+                                middleIcon = '<i class="fas fa-handshake text-warning"></i>';
+                                rightIcon = '<span class="battle-icon"></span>';
+                            } else if (match.challenger.isVictor) {
+                                // Challenger wins
+                                leftIcon = '<i class="fas fa-trophy text-success"></i>';
+                                middleIcon = 'VS';
+                                rightIcon = '<i class="fas fa-skull text-danger"></i>';
+                            } else {
+                                // Opponent wins
+                                leftIcon = '<i class="fas fa-skull text-danger"></i>';
+                                middleIcon = 'VS';
+                                rightIcon = '<i class="fas fa-trophy text-success"></i>';
+                            }
 
-                    <div class="match-vs">
-                        <span>VS</span>
-                        <span class="rounds-info"><i class="fas fa-clock"></i> ${match.rounds.length}</span>
-                    </div>
-
-                    <div class="character-header d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="class-icon" title="${CHARACTER_CLASSES[match.opponent.characterClass].name}">
-                                ${match.opponent.characterClass === 'WARRIOR' ? '⚔️' : '🔮'}
-                            </span>
-                            <h6 class="character-name mb-0">
-                                ${match.opponent.name}
-                                <span class="experience-gained">
-                                    <i class="fas fa-star"></i> +${match.opponent.experienceGained}
-                                </span>
-                            </h6>
-                        </div>
-                        <span class="badge ms-3 ${match.opponent.isVictor ? 'bg-success' : !match.challenger.isVictor ? 'bg-warning' : 'bg-danger'}">
-                            ${!match.challenger.isVictor && !match.opponent.isVictor 
-                                ? '<i class="fas fa-handshake"></i> Draw'
-                                : match.opponent.isVictor 
-                                    ? '<i class="fas fa-trophy"></i> Victor'
-                                    : '<i class="fas fa-skull"></i> Defeated'}
-                        </span>
-                    </div>
-                </div>
+                            return `
+                                <tr class="cosmic-row match-row" data-class="${rowClass}" style="cursor: pointer;">
+                                    <td>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="class-icon" title="${match.challenger.characterClass === 'WARRIOR' ? 'Warrior' : 'Sorcerer'}">
+                                                    ${match.challenger.characterClass === 'WARRIOR' ? '⚔️' : '🔮'}
+                                                </span>
+                                                <span>${match.challenger.name}</span>
+                                            </div>
+                                            <span class="experience-info" title="Experience Gained">
+                                                <i class="fas fa-star"></i> +${match.challenger.experienceGained}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center battle-column">
+                                        <span class="battle-icon">${leftIcon}</span>
+                                    </td>
+                                    <td class="text-center battle-column">
+                                        <span class="battle-icon">${middleIcon}</span>
+                                    </td>
+                                    <td class="text-center battle-column">
+                                        <span class="battle-icon">${rightIcon}</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="class-icon" title="${match.opponent.characterClass === 'WARRIOR' ? 'Warrior' : 'Sorcerer'}">
+                                                    ${match.opponent.characterClass === 'WARRIOR' ? '⚔️' : '🔮'}
+                                                </span>
+                                                <span>${match.opponent.name}</span>
+                                            </div>
+                                            <span class="experience-info" title="Experience Gained">
+                                                <i class="fas fa-star"></i> +${match.opponent.experienceGained}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="rounds-info">
+                                            <i class="fas fa-clock"></i> ${match.rounds.length}
+                                        </span>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
             </div>
         `;
 
+        // Add click handlers for match details
+        const matchRows = matchesList.querySelectorAll('.match-row');
+        matchRows.forEach((row, index) => {
+            row.addEventListener('click', () => this.displayMatchResult(matches[index]));
+        });
+
         // Initialize tooltips
-        const tooltips = div.querySelectorAll('[title]');
+        const tooltips = matchesList.querySelectorAll('[title]');
         tooltips.forEach(el => new bootstrap.Tooltip(el));
-
-        div.addEventListener('click', () => this.displayMatchResult(match));
-
-        return div;
     }
 
     async handleFight(event) {
