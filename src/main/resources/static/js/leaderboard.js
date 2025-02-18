@@ -10,7 +10,7 @@ class LeaderboardTab {
 
     initialize() {
         console.log('Initializing leaderboard tab...');
-        
+
         // Add event listener for tab shown
         document.getElementById('leaderboard-tab').addEventListener('shown.bs.tab', () => {
             console.log('Leaderboard tab shown, loading rankings...');
@@ -47,7 +47,7 @@ class LeaderboardTab {
 
     displayLeaderboard() {
         const leaderboardContainer = document.getElementById('leaderboardContent');
-        
+
         if (!this.rankings || this.rankings.length === 0) {
             leaderboardContainer.innerHTML = `
                 <div class="empty-state">
@@ -60,26 +60,28 @@ class LeaderboardTab {
         }
 
         // Filter rankings based on current filter
-        const filteredRankings = this.currentFilter === 'ALL' 
+        const filteredRankings = this.currentFilter === 'ALL'
             ? this.rankings
             : this.rankings.filter(entry => entry.character.characterClass === this.currentFilter);
 
         // Create the leaderboard with filter buttons and character cards
         leaderboardContainer.innerHTML = `
             <div class="leaderboard-filters mb-4">
-                <div class="btn-group">
-                    <button class="btn ${this.currentFilter === 'ALL' ? 'btn-cosmic active' : 'btn-cosmic-outline'}" 
-                            data-filter="ALL">
-                        🌟 All Classes
-                    </button>
-                    <button class="btn ${this.currentFilter === 'WARRIOR' ? 'btn-cosmic active' : 'btn-cosmic-outline'}" 
-                            data-filter="WARRIOR">
-                        ⚔️ Warriors
-                    </button>
-                    <button class="btn ${this.currentFilter === 'SORCERER' ? 'btn-cosmic active' : 'btn-cosmic-outline'}" 
-                            data-filter="SORCERER">
-                        🔮 Sorcerers
-                    </button>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                        <button class="btn ${this.currentFilter === 'ALL' ? 'btn-cosmic' : 'btn-cosmic-outline'}" 
+                                data-filter="ALL">
+                            <span class="class-icon">🌟</span> All Classes
+                        </button>
+                        <button class="btn ${this.currentFilter === 'WARRIOR' ? 'btn-cosmic' : 'btn-cosmic-outline'}" 
+                                data-filter="WARRIOR">
+                            <span class="class-icon">⚔️</span> Warriors
+                        </button>
+                        <button class="btn ${this.currentFilter === 'SORCERER' ? 'btn-cosmic' : 'btn-cosmic-outline'}" 
+                                data-filter="SORCERER">
+                            <span class="class-icon">🔮</span> Sorcerers
+                        </button>
+                    </div>
                 </div>
             </div>
             <div class="table-responsive">
@@ -165,10 +167,10 @@ class LeaderboardTab {
         const div = document.createElement('div');
         div.className = 'leaderboard-entry card mb-3';
         div.dataset.class = entry.character.characterClass;
-  
+
         const totalMatches = entry.wins + entry.losses + entry.draws;
         const winRate = totalMatches > 0 ? ((character.wins / totalMatches) * 100).toFixed(1) : 0;
-  
+
         div.innerHTML = `
             <div class="card-body d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center gap-3">
@@ -208,9 +210,9 @@ class LeaderboardTab {
                 </div>
             </div>
         `;
-  
+
         return div;
     }
 }
 
-export default LeaderboardTab; 
+export default LeaderboardTab;

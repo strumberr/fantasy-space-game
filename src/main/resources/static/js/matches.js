@@ -227,7 +227,11 @@ class MatchesTab {
                             </h6>
                         </div>
                         <span class="badge ms-3 ${match.challenger.isVictor ? 'bg-success' : !match.opponent.isVictor ? 'bg-warning' : 'bg-danger'}">
-                            ${!match.challenger.isVictor && !match.opponent.isVictor ? 'DRAW' : match.challenger.isVictor ? 'WINNER' : 'DEFEATED'}
+                            ${!match.challenger.isVictor && !match.opponent.isVictor 
+                                ? '<i class="fas fa-handshake"></i> Draw'
+                                : match.challenger.isVictor 
+                                    ? '<i class="fas fa-trophy"></i> Victor'
+                                    : '<i class="fas fa-skull"></i> Defeated'}
                         </span>
                     </div>
 
@@ -249,7 +253,11 @@ class MatchesTab {
                             </h6>
                         </div>
                         <span class="badge ms-3 ${match.opponent.isVictor ? 'bg-success' : !match.challenger.isVictor ? 'bg-warning' : 'bg-danger'}">
-                            ${!match.challenger.isVictor && !match.opponent.isVictor ? 'DRAW' : match.opponent.isVictor ? 'WINNER' : 'DEFEATED'}
+                            ${!match.challenger.isVictor && !match.opponent.isVictor 
+                                ? '<i class="fas fa-handshake"></i> Draw'
+                                : match.opponent.isVictor 
+                                    ? '<i class="fas fa-trophy"></i> Victor'
+                                    : '<i class="fas fa-skull"></i> Defeated'}
                         </span>
                     </div>
                 </div>
@@ -349,7 +357,11 @@ class MatchesTab {
                                 <h5 class="mb-0">${match.challenger.name}</h5>
                             </div>
                             <div class="badge ${match.challenger.isVictor ? 'bg-success' : !match.opponent.isVictor ? 'bg-warning' : 'bg-danger'}">
-                                ${!match.challenger.isVictor && !match.opponent.isVictor ? 'DRAW' : match.challenger.isVictor ? 'WINNER' : 'DEFEATED'}
+                                ${!match.challenger.isVictor && !match.opponent.isVictor 
+                                    ? '<i class="fas fa-handshake"></i> Draw'
+                                    : match.challenger.isVictor 
+                                        ? '<i class="fas fa-trophy"></i> Victor'
+                                        : '<i class="fas fa-skull"></i> Defeated'}
                             </div>
                             <div class="experience-info">
                                 <div class="d-flex align-items-center gap-2">
@@ -376,7 +388,11 @@ class MatchesTab {
                                 <h5 class="mb-0">${match.opponent.name}</h5>
                             </div>
                             <div class="badge ${match.opponent.isVictor ? 'bg-success' : !match.challenger.isVictor ? 'bg-warning' : 'bg-danger'}">
-                                ${!match.challenger.isVictor && !match.opponent.isVictor ? 'DRAW' : match.opponent.isVictor ? 'WINNER' : 'DEFEATED'}
+                                ${!match.challenger.isVictor && !match.opponent.isVictor 
+                                    ? '<i class="fas fa-handshake"></i> Draw'
+                                    : match.opponent.isVictor 
+                                        ? '<i class="fas fa-trophy"></i> Victor'
+                                        : '<i class="fas fa-skull"></i> Defeated'}
                             </div>
                             <div class="experience-info">
                                 <div class="d-flex align-items-center gap-2">
