@@ -1,6 +1,7 @@
 package com.motycka.edu.game.account
 
 import com.motycka.edu.game.account.model.Account
+import com.motycka.edu.game.account.model.AccountId
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
@@ -18,8 +19,17 @@ class AccountRepository(
     private val jdbcTemplate: JdbcTemplate
 ) {
 
+    fun selectById(id: AccountId): Account? {
+        logger.debug { "Selecting user by id $id" }
+        return jdbcTemplate.query(
+            "SELECT * FROM account WHERE id = ?;",
+            ::rowMapper,
+            id
+        ).firstOrNull()
+    }
+
     fun selectByUsername(username: String): Account? {
-        logger.debug { "Selecting user $username" }
+        logger.debug { "Selecting user by username ***" }
         return jdbcTemplate.query(
             "SELECT * FROM account WHERE username = ?;",
             ::rowMapper,

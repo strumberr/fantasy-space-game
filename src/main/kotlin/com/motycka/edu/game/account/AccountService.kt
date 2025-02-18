@@ -11,12 +11,20 @@ import org.springframework.stereotype.Service
 private val logger = KotlinLogging.logger {}
 
 /**
- * The UserJdbcService uses the UserJdbcRepository to perform CRUD operations on users.
+ * This is example of service implementation with repository dependency injection.
  */
 @Service
 class AccountService(
     private val accountRepository: AccountRepository,
 ) {
+
+    fun getAccount(id: AccountId): Account {
+        logger.debug { "Getting user by id $id" }
+        return when {
+            getCurrentAccountId() != id -> null
+            else -> accountRepository.selectById(id = id)
+        } ?: throw UsernameNotFoundException(id.toString())
+    }
 
     fun getCurrentAccountId(): AccountId {
         val authentication = SecurityContextHolder.getContext().authentication
@@ -30,13 +38,14 @@ class AccountService(
 
     fun getByUsername(username: String): Account? {
         logger.debug { "Getting user $username" }
-        return accountRepository.selectByUsername(username)
+        return accountRepository.selectByUsername(username = username)
     }
 
     fun createAccount(account: Account): Account {
         logger.debug { "Creating new user: $account" }
-        return accountRepository.insertAccount(account) ?: error(CREATE_ERROR)
+        return accountRepository.insertAccount(account = account) ?: error(CREATE_ERROR)
     }
+
 
     companion object {
         const val CREATE_ERROR = "Account could not be created."

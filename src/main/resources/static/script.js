@@ -1,7 +1,3 @@
-import CharactersTab from './js/characters.js';
-import MatchesTab from './js/matches.js';
-import LeaderboardTab from './js/leaderboard.js';
-
 // Common configurations
 export const CHARACTER_CLASSES = {
     WARRIOR: {
@@ -82,43 +78,17 @@ export async function fetchWithAuth(url, options = {}) {
     return response.json();
 }
 
-// Initialize tabs when DOM is loaded
-document.addEventListener('DOMContentLoaded', async () => {
-    if (!checkAuth()) return;
-
-    try {
-        // Initialize all tabs
-        const charactersTab = new CharactersTab();
-        const matchesTab = new MatchesTab();
-        const leaderboardTab = new LeaderboardTab();
-
-        // Show characters tab by default
-        const charactersTabEl = document.getElementById('characters-tab');
-        const tab = new bootstrap.Tab(charactersTabEl);
-        tab.show();
-    } catch (error) {
-        console.error('Error initializing application:', error);
-        showToast('Failed to initialize application', true);
-    }
-});
-
-// Update the logout handler to clear all user data
+// Logout handler
 window.handleLogout = function() {
-    // Clear all authentication and user data
-    window.sessionStorage.clear();  // Clears all session storage
-    window.localStorage.clear();    // Clears all local storage
-    
-    // Clear any cached data or state
+    window.sessionStorage.clear();
+    window.localStorage.clear();
     window.location.href = '/login.html';
 }
 
-// Add function to reset user context when loading login page
+// Reset user context
 export function resetUserContext() {
-    // Clear all storage
     window.sessionStorage.clear();
     window.localStorage.clear();
-    
-    // Clear any cached data
     if (window.caches) {
         caches.keys().then(names => {
             names.forEach(name => {

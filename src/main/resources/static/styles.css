@@ -1452,3 +1452,80 @@ body {
     padding: 0;
     line-height: 1.2;
 }
+
+/* Login page specific styles */
+.login-container {
+    background: rgba(45, 27, 78, 0.4);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 2.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(107, 63, 160, 0.2);
+}
+
+.login-container .game-title {
+    font-size: 2.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.login-container .game-subtitle {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    color: var(--nebula-glow);
+    opacity: 0.9;
+}
+
+.cosmic-form .form-control {
+    background: rgba(10, 5, 23, 0.6);
+    border: 1px solid rgba(107, 63, 160, 0.3);
+    color: #ffffff;
+    padding: 0.8rem 1.2rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.cosmic-form .form-control:focus {
+    background: rgba(10, 5, 23, 0.8);
+    border-color: var(--nebula-purple);
+    box-shadow: 0 0 15px rgba(107, 63, 160, 0.3);
+}
+
+.cosmic-form .form-control::placeholder {
+    color: rgba(199, 143, 255, 0.5);
+}
+
+.cosmic-form .btn-cosmic {
+    margin-top: 1rem;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    background: linear-gradient(45deg, var(--nebula-purple), var(--nebula-blue));
+    border: none;
+    box-shadow: 0 4px 15px rgba(107, 63, 160, 0.4);
+    transition: all 0.3s ease;
+}
+
+.cosmic-form .btn-cosmic:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(107, 63, 160, 0.6);
+    background: linear-gradient(45deg, var(--nebula-blue), var(--nebula-purple));
+}
+
+.cosmic-form .btn-cosmic:active {
+    transform: translateY(0);
+}
+
+.cosmic-form .btn-cosmic i {
+    margin-right: 0.5rem;
+    font-size: 1.1rem;
+}
+
+/* Add responsive margin for mobile */
+@media (max-width: 768px) {
+    .login-container {
+        padding: 2rem;
+        margin: 1rem;
+    }
+}

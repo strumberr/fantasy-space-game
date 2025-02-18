@@ -8,3 +8,10 @@ fun AccountRegistrationRequest.toAccount() = Account(
     username = username,
     password = password
 )
+
+fun Account.toAccountResponse() = AccountResponse(
+    id = requireNotNull(id) { "Account id must not be null" },
+    name = name,
+    username = username,
+    password = password
+)
