@@ -15,14 +15,14 @@ private val logger = KotlinLogging.logger {}
  */
 @Service
 class AccountService(
-    private val userRepository: AccountRepository,
+    private val accountRepository: AccountRepository,
 ) {
 
     fun getCurrentAccountId(): AccountId {
         val authentication = SecurityContextHolder.getContext().authentication
         val principal = authentication.principal
         return if (principal is UserDetails) {
-            userRepository.selectByUsername(principal.username)?.id ?: throw UsernameNotFoundException(principal.username)
+            accountRepository.selectByUsername(principal.username)?.id ?: throw UsernameNotFoundException(principal.username)
         } else {
             error("Unknown principal type: $principal")
         }
@@ -30,12 +30,12 @@ class AccountService(
 
     fun getByUsername(username: String): Account? {
         logger.debug { "Getting user $username" }
-        return userRepository.selectByUsername(username)
+        return accountRepository.selectByUsername(username)
     }
 
     fun createAccount(account: Account): Account {
         logger.debug { "Creating new user: $account" }
-        return userRepository.insertAccount(account) ?: error(CREATE_ERROR)
+        return accountRepository.insertAccount(account) ?: error(CREATE_ERROR)
     }
 
     companion object {

@@ -33,7 +33,7 @@ class AccountRepository(
             """
                 SELECT * FROM FINAL TABLE (
                     INSERT INTO account (name, username, password) 
-                    VALUES (?, ?, ?, ?)
+                    VALUES (?, ?, ?)
                 );
             """.trimIndent(),
             ::rowMapper,

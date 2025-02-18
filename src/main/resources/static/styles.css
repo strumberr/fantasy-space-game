@@ -27,6 +27,8 @@ body {
     backdrop-filter: blur(4px);
     border: 1px solid rgba(107, 63, 160, 0.2);
     margin-top: 1rem;
+    max-width: 1200px;
+    padding: 0 1rem;
 }
 
 /* Branding */
@@ -1433,4 +1435,20 @@ body {
     font-size: 0.7em;
     opacity: 0.8;
     margin-left: 1px;
+}
+
+/* Update header container styling */
+.cosmic-header {
+    padding: 2rem 1rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    overflow: hidden;  /* Prevent text overflow */
+    word-break: break-word;  /* Allow long words to break */
+}
+
+.cosmic-header h1 {
+    font-size: clamp(1.5rem, 5vw, 2.5rem);  /* Responsive font size */
+    margin: 0;
+    padding: 0;
+    line-height: 1.2;
 }

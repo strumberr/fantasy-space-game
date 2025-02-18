@@ -1,8 +1,15 @@
-// Check if we were redirected here due to auth failure
-const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.get('authError')) {
-    showError('Session expired. Please login again.');
-}
+import { resetUserContext } from './script.js';
+
+// Reset user context when login page loads
+document.addEventListener('DOMContentLoaded', () => {
+    resetUserContext();
+    
+    // Check for auth error parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('authError')) {
+        showLoginError('Your session has expired. Please log in again.');
+    }
+});
 
 window.addEventListener('unhandledrejection', event => {
     if (event.reason?.status === 401) {

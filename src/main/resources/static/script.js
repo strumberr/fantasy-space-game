@@ -102,9 +102,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-function handleLogout() {
-    // Clear the token
-    localStorage.removeItem('token');
-    // Redirect to login page
+// Update the logout handler to clear all user data
+window.handleLogout = function() {
+    // Clear all authentication and user data
+    window.sessionStorage.clear();  // Clears all session storage
+    window.localStorage.clear();    // Clears all local storage
+    
+    // Clear any cached data or state
     window.location.href = '/login.html';
+}
+
+// Add function to reset user context when loading login page
+export function resetUserContext() {
+    // Clear all storage
+    window.sessionStorage.clear();
+    window.localStorage.clear();
+    
+    // Clear any cached data
+    if (window.caches) {
+        caches.keys().then(names => {
+            names.forEach(name => {
+                caches.delete(name);
+            });
+        });
+    }
 }
