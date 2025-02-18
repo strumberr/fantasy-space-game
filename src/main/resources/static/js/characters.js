@@ -386,17 +386,32 @@ class CharactersTab {
             const form = modal.querySelector('form');
             
             // Update character info
-            modal.querySelector('.character-name').textContent = character.name;
-            modal.querySelector('.character-class').textContent = 
-                `${CHARACTER_CLASSES[character.characterClass].name} ${nextLevel ? `(Level ${nextLevel})` : ''}`;
+            const characterHeader = modal.querySelector('.modal-header');
+            characterHeader.innerHTML = `
+                <div class="character-header">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="class-icon">
+                            ${character.characterClass === 'WARRIOR' ? '⚔️' : '🔮'}
+                        </span>
+                        <h5 class="character-name mb-0">${character.name}</h5>
+                        <span class="character-level">
+                            <i class="fas fa-star"></i> ${nextLevel || character.level}
+                        </span>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            `;
+            
+            // Add cosmic background class to modal content
+            modal.querySelector('.modal-content').className = 'modal-content cosmic-modal';
             
             // Clear previous form
             const propertiesContainer = modal.querySelector('#levelUpProperties');
             propertiesContainer.innerHTML = '';
             
-            // Create properties row
+            // Create properties row with more padding
             const propertiesRow = document.createElement('div');
-            propertiesRow.className = 'd-flex gap-3';
+            propertiesRow.className = 'd-flex gap-3 p-2';  // Added p-2 for inner padding
             
             // Add property inputs
             const commonProps = COMMON_DISPLAY_PROPERTIES;
@@ -407,19 +422,26 @@ class CharactersTab {
                 formGroup.className = 'flex-grow-1';
                 
                 const label = document.createElement('label');
-                label.className = 'form-label';
+                label.className = 'form-label mb-1';
                 label.textContent = this.formatPropertyName(prop);
                 
                 const input = document.createElement('input');
                 input.type = 'number';
-                input.className = 'form-control';
+                input.className = 'form-control form-control-sm';
                 input.name = prop;
-                input.value = '0';
-                input.min = '0';
+                input.value = character[prop] || 0;
+                input.min = character[prop] || 0;  // Set minimum to current value
                 input.required = true;
-                
-                // Add current value as placeholder
                 input.placeholder = `Current: ${character[prop] || 0}`;
+                
+                // Prevent manual input of values below current
+                input.addEventListener('change', () => {
+                    const currentValue = parseInt(input.value) || 0;
+                    const minValue = character[input.name] || 0;
+                    if (currentValue < minValue) {
+                        input.value = minValue;
+                    }
+                });
                 
                 formGroup.appendChild(label);
                 formGroup.appendChild(input);
@@ -430,7 +452,7 @@ class CharactersTab {
             
             // Add points display
             const pointsDisplay = document.createElement('div');
-            pointsDisplay.className = 'points-summary mt-3';
+            pointsDisplay.className = 'points-summary mt-3 mb-4';
             pointsDisplay.innerHTML = `
                 <div class="points-row">
                     <span>Available Points:</span>
@@ -456,50 +478,41 @@ class CharactersTab {
             const inputs = form.querySelectorAll('input[type="number"]');
             inputs.forEach(input => {
                 input.addEventListener('change', () => {
-                    let used = 0;
-                    inputs.forEach(i => used += parseInt(i.value) || 0);
+                    const used = Array.from(inputs).reduce((sum, input) => {
+                        const currentValue = parseInt(input.value) || 0;
+                        const originalValue = character[input.name] || 0;
+                        return sum + (currentValue - originalValue);
+                    }, 0);
+                    
                     const available = character.availablePoints - used;
                     modal.querySelector('#availablePoints').textContent = available;
-                    
-                    // Disable submit if points exceeded
-                    form.querySelector('button[type="submit"]').disabled = available < 0;
-                    
-                    // Update points display class
-                    pointsDisplay.className = `points-summary mt-3 ${
-                        available === 0 ? 'points-valid' : 
-                        available < 0 ? 'points-exceeded' : 
-                        'points-remaining'
-                    }`;
+                    form.querySelector('button[type="submit"]').disabled = available !== 0;
+                    pointsDisplay.className = `points-summary mt-3 ${available === 0 ? 'points-valid' : available < 0 ? 'points-exceeded' : 'points-remaining'}`;
                 });
             });
             
-            // Add auto-level button to the modal footer
+            // Update modal footer
             const modalFooter = modal.querySelector('.modal-footer');
             modalFooter.innerHTML = `
-                <button type="button" class="btn btn-cosmic-outline" onclick="autoLevelUp()">
-                    <i class="fas fa-magic"></i> Auto Assign
-                </button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn-primary">Create Character</button>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-cosmic-outline" onclick="autoLevelUp()">
+                        <i class="fas fa-magic"></i> Auto Assign
+                    </button>
+                    <button type="submit" class="btn btn-cosmic" disabled>
+                        <i class="fas fa-level-up-alt"></i> Level Up!
+                    </button>
+                </div>
             `;
             
             // Add the auto level up function
             window.autoLevelUp = () => {
-                const inputs = form.querySelectorAll('input[type="number"]');
                 const availablePoints = character.availablePoints;
                 const inputCount = inputs.length;
-                
-                // Calculate base points per property
                 const basePoints = Math.floor(availablePoints / inputCount);
-                let remainingPoints = availablePoints % inputCount;
+                let remaining = availablePoints % inputCount;
                 
-                // Distribute points evenly
                 inputs.forEach(input => {
-                    const extraPoint = remainingPoints > 0 ? 1 : 0;
-                    input.value = basePoints + extraPoint;
-                    remainingPoints--;
-                    
-                    // Trigger change event to update available points display
+                    input.value = basePoints + (remaining-- > 0 ? 1 : 0);
                     input.dispatchEvent(new Event('change'));
                 });
             };

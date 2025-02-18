@@ -1191,3 +1191,98 @@ body {
 .cosmic-row[data-class="SORCERER"] .level-badge {
     background: rgba(74, 144, 226, 0.1);
 }
+
+/* Level up modal styling */
+.cosmic-modal {
+    background: linear-gradient(160deg, rgb(45, 27, 78), rgb(10, 5, 23));
+    border: 1px solid rgba(107, 63, 160, 0.2);
+}
+
+.cosmic-modal .modal-header {
+    border-color: rgba(107, 63, 160, 0.2);
+    padding: 0.75rem 1.5rem;  /* Reduced padding */
+}
+
+.cosmic-modal .character-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.cosmic-modal .modal-body {
+    padding: 1.5rem;
+}
+
+.cosmic-modal .form-label {
+    color: var(--nebula-glow);
+}
+
+.cosmic-modal .form-control {
+    background: rgba(45, 27, 78, 0.4);
+    border: 1px solid rgba(107, 63, 160, 0.2);
+    color: #ffffff;
+}
+
+.cosmic-modal .form-control:focus {
+    background: rgba(45, 27, 78, 0.6);
+    border-color: rgba(107, 63, 160, 0.4);
+    box-shadow: 0 0 0 0.25rem rgba(107, 63, 160, 0.15);
+}
+
+.cosmic-modal .modal-footer {
+    border-color: rgba(107, 63, 160, 0.2);
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.cosmic-modal .btn-cosmic {
+    background: linear-gradient(45deg, var(--nebula-purple), var(--nebula-blue));
+    border: none;
+    color: #ffffff;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(107, 63, 160, 0.3);
+    transition: all 0.3s ease;
+}
+
+.cosmic-modal .btn-cosmic:hover:not(:disabled) {
+    background: linear-gradient(45deg, var(--nebula-blue), var(--nebula-purple));
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(107, 63, 160, 0.4);
+}
+
+.cosmic-modal .btn-cosmic:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.cosmic-modal .btn-cosmic-outline {
+    background: transparent;
+    border: 1px solid rgba(199, 143, 255, 0.3);
+    color: var(--nebula-glow);
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.cosmic-modal .btn-cosmic-outline:hover {
+    background: rgba(107, 63, 160, 0.1);
+    border-color: rgba(199, 143, 255, 0.5);
+    color: #ffffff;
+}
+
+.cosmic-modal .character-level {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    background: rgba(107, 63, 160, 0.1);
+    border-radius: 4px;
+    color: var(--nebula-glow);
+}
+
+.cosmic-modal .character-level i {
+    color: var(--warning);
+    font-size: 0.9rem;
+}
