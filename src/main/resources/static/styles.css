@@ -645,35 +645,65 @@ body {
 
 /* Leaderboard styles */
 .leaderboard-table {
-    background: rgba(10, 5, 23, 0.7);
+    background: var(--space-dark);
     border-radius: 8px;
     overflow: hidden;
     border: 1px solid rgba(107, 63, 160, 0.2);
 }
 
-.leaderboard-table thead {
-    background: rgba(107, 63, 160, 0.1);
+.leaderboard-table .cosmic-header {
+    background: linear-gradient(90deg, 
+        rgba(107, 63, 160, 0.3) 0%,
+        rgba(45, 27, 78, 0.4) 100%
+    ) !important;
+    border-bottom: 2px solid rgba(107, 63, 160, 0.4);
 }
 
-.leaderboard-table th {
+.leaderboard-table .cosmic-header th {
     color: var(--nebula-glow);
     font-weight: 600;
-    border-bottom: 1px solid rgba(107, 63, 160, 0.2);
     padding: 1rem;
+    border: none;
+    background: transparent !important;
 }
 
-.leaderboard-table td {
+.leaderboard-table .cosmic-body td {
     padding: 1rem;
     border-bottom: 1px solid rgba(107, 63, 160, 0.1);
+    color: #e0e0e0;
     vertical-align: middle;
 }
 
-.leaderboard-table tbody tr {
+.leaderboard-table .cosmic-row {
     transition: background-color 0.2s;
 }
 
-.leaderboard-table tbody tr:hover {
-    background: rgba(107, 63, 160, 0.1);
+.leaderboard-table .cosmic-row[data-class="WARRIOR"] {
+    background: linear-gradient(90deg, 
+        rgba(255, 215, 0, 0.15) 0%,
+        rgba(45, 27, 78, 0.3) 100%
+    ) !important;
+    border-left: 4px solid rgba(255, 215, 0, 0.6);
+}
+
+.leaderboard-table .cosmic-row[data-class="SORCERER"] {
+    background: linear-gradient(90deg, 
+        rgba(74, 144, 226, 0.15) 0%,
+        rgba(45, 27, 78, 0.3) 100%
+    ) !important;
+    border-left: 4px solid rgba(74, 144, 226, 0.6);
+}
+
+.leaderboard-table .cosmic-row:hover {
+    background: linear-gradient(90deg, 
+        rgba(107, 63, 160, 0.25) 0%,
+        rgba(45, 27, 78, 0.4) 100%
+    ) !important;
+}
+
+/* Make sure table cells don't override the background */
+.leaderboard-table td {
+    background: transparent !important;
 }
 
 .position {
@@ -1010,6 +1040,7 @@ body {
 /* Leaderboard statistics styling */
 .stats-group {
     display: inline-flex;
+    align-items: center;
     gap: 0.5rem;
     padding: 0.25rem 0.5rem;
     background: rgba(10, 5, 23, 0.3);
@@ -1018,23 +1049,14 @@ body {
 
 .stat-win {
     color: var(--success);
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
 }
 
 .stat-loss {
     color: var(--danger);
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
 }
 
 .stat-draw {
     color: var(--warning);
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
 }
 
 .position-badge {
@@ -1063,25 +1085,74 @@ body {
 }
 
 .win-rate {
-    width: 100px;
+    width: 120px;
 }
 
 .win-rate .progress {
-    height: 1.5rem;
-    background: rgba(10, 5, 23, 0.3);
+    height: 1.8rem;
+    background: rgba(10, 5, 23, 0.5);
+    border: 1px solid rgba(107, 63, 160, 0.3);
     border-radius: 1rem;
     overflow: hidden;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 .win-rate .progress-bar {
-    background: linear-gradient(45deg, var(--success), var(--nebula-blue));
+    background: linear-gradient(90deg, 
+        var(--nebula-purple) 0%,
+        var(--nebula-blue) 50%,
+        var(--nebula-pink) 100%
+    );
     color: white;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
     text-align: center;
-    line-height: 1.5rem;
-    font-size: 0.85rem;
+    line-height: 1.8rem;
+    font-size: 0.9rem;
     font-weight: 500;
     transition: width 0.3s ease;
+    box-shadow: 0 0 15px rgba(107, 63, 160, 0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+.win-rate .progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        transparent 100%
+    );
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Class-specific win rate colors */
+.cosmic-row[data-class="WARRIOR"] .progress-bar {
+    background: linear-gradient(90deg, 
+        rgba(255, 215, 0, 0.8) 0%,
+        rgba(255, 140, 0, 0.8) 100%
+    );
+}
+
+.cosmic-row[data-class="SORCERER"] .progress-bar {
+    background: linear-gradient(90deg, 
+        rgba(74, 144, 226, 0.8) 0%,
+        rgba(138, 43, 226, 0.8) 100%
+    );
 }
 
 .leaderboard-entry .experience-info {
@@ -1096,4 +1167,27 @@ body {
 
 .leaderboard-entry .character-stats {
     font-size: 0.9rem;
+}
+
+.level-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    background: rgba(107, 63, 160, 0.1);
+    border-radius: 4px;
+    color: var(--nebula-glow);
+}
+
+.level-badge i {
+    color: var(--warning);
+    font-size: 0.9rem;
+}
+
+.cosmic-row[data-class="WARRIOR"] .level-badge {
+    background: rgba(255, 215, 0, 0.1);
+}
+
+.cosmic-row[data-class="SORCERER"] .level-badge {
+    background: rgba(74, 144, 226, 0.1);
 }

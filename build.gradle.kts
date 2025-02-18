@@ -1,10 +1,10 @@
 import org.gradle.kotlin.dsl.withType
 
 plugins {
-    kotlin("jvm") version "2.1.0"
-    kotlin("plugin.spring") version "2.1.0"
-    id("org.springframework.boot") version "3.0.0"
-    id("io.spring.dependency-management") version "1.0.15.RELEASE"
+    kotlin("jvm")
+    kotlin("plugin.spring")
+    id("org.springframework.boot")
+    id("io.spring.dependency-management")
     id("idea")
 }
 

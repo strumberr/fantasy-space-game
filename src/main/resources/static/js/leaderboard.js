@@ -61,7 +61,7 @@ class LeaderboardTab {
             ? this.rankings
             : this.rankings.filter(entry => entry.character.characterClass === this.currentFilter);
 
-        // Create the table with filter buttons and the existing structure
+        // Create the leaderboard with filter buttons and character cards
         leaderboardContainer.innerHTML = `
             <div class="leaderboard-filters mb-4">
                 <div class="btn-group">
@@ -80,58 +80,57 @@ class LeaderboardTab {
                 </div>
             </div>
             <div class="table-responsive">
-                <table class="table table-dark table-hover">
-                    <thead>
+                <table class="table leaderboard-table">
+                    <thead class="cosmic-header">
                         <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Character</th>
+                            <th scope="col" class="text-center">Rank</th>
                             <th scope="col">Class</th>
+                            <th scope="col">Name</th>
                             <th scope="col">Level</th>
                             <th scope="col">Experience</th>
                             <th scope="col">W/L/D</th>
                             <th scope="col">Win Rate</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="cosmic-body">
                         ${filteredRankings.map((entry, index) => {
                             const characterClass = CHARACTER_CLASSES[entry.character.characterClass];
                             const className = characterClass ? characterClass.name : entry.character.characterClass;
-                            const totalMatches = entry.victories + entry.defeats + entry.draws;
-                            const winRate = totalMatches > 0 ? ((entry.victories / totalMatches) * 100).toFixed(1) : 0;
+                            const totalMatches = entry.wins + entry.losses + entry.draws;
+                            const winRate = totalMatches > 0 ? ((entry.wins / totalMatches) * 100).toFixed(1) : 0;
                             
                             return `
-                                <tr>
+                                <tr class="cosmic-row" data-class="${entry.character.characterClass}">
+                                    <td class="text-center">
+                                        ${index < 3 ? `🏆 ${index + 1}` : (index + 1)}
+                                    </td>
                                     <td>
-                                        <span class="position-badge ${index < 3 ? 'top-' + (index + 1) : ''}">
-                                            ${index < 3 ? '🏆' : (index + 1)}
-                                        </span>
+                                        ${entry.character.characterClass === 'WARRIOR' ? '⚔️' : '🔮'}
+                                        ${className}
                                     </td>
                                     <td>${entry.character.name}</td>
                                     <td>
-                                        <span class="class-icon" title="${className}">
-                                            ${entry.character.characterClass === 'WARRIOR' ? '⚔️' : '🔮'}
+                                        <span class="level-badge">
+                                            <i class="fas fa-star"></i> ${formatLevel(entry.character.level)}
                                         </span>
                                     </td>
-                                    <td>${formatLevel(entry.character.level)}</td>
-                                    <td>${entry.experience}</td>
+                                    <td>${entry.character.experience}</td>
                                     <td>
                                         <span class="stats-group">
-                                            <span class="stat-win" title="Wins">${entry.victories}</span>
-                                            <span class="stat-loss" title="Losses">${entry.defeats}</span>
+                                            <span class="stat-win" title="Wins">${entry.wins}</span> /
+                                            <span class="stat-loss" title="Losses">${entry.losses}</span> /
                                             <span class="stat-draw" title="Draws">${entry.draws}</span>
                                         </span>
                                     </td>
                                     <td>
-                                        <div class="win-rate" title="Win Rate">
-                                            <div class="progress">
-                                                <div class="progress-bar" 
-                                                     role="progressbar" 
-                                                     style="width: ${winRate}%"
-                                                     aria-valuenow="${winRate}" 
-                                                     aria-valuemin="0" 
-                                                     aria-valuemax="100">
-                                                    ${winRate}%
-                                                </div>
+                                        <div class="progress">
+                                            <div class="progress-bar" 
+                                                 role="progressbar" 
+                                                 style="width: ${winRate}%"
+                                                 aria-valuenow="${winRate}" 
+                                                 aria-valuemin="0" 
+                                                 aria-valuemax="100">
+                                                ${winRate}%
                                             </div>
                                         </div>
                                     </td>
@@ -157,12 +156,12 @@ class LeaderboardTab {
         tooltips.forEach(el => new bootstrap.Tooltip(el));
     }
 
-    createLeaderboardEntry(character, position) {
+    createLeaderboardEntry(entry, position) {
         const div = document.createElement('div');
         div.className = 'leaderboard-entry card mb-3';
-        div.dataset.class = character.characterClass;
+        div.dataset.class = entry.character.characterClass;
   
-        const totalMatches = character.wins + character.losses + character.draws;
+        const totalMatches = entry.wins + entry.losses + entry.draws;
         const winRate = totalMatches > 0 ? ((character.wins / totalMatches) * 100).toFixed(1) : 0;
   
         div.innerHTML = `
@@ -174,7 +173,7 @@ class LeaderboardTab {
                     
                     <div>
                         <div class="d-flex align-items-center gap-2">
-                            <span class="class-icon" title="${CHARACTER_CLASSES[character.characterClass].name}">
+                            <span class="class-icon" title="${CHARACTER_CLASSES[entry.character.characterClass].name}">
                                 ${character.characterClass === 'WARRIOR' ? '⚔️' : '🔮'}
                             </span>
                             <h6 class="character-name mb-0">
@@ -184,7 +183,7 @@ class LeaderboardTab {
                         
                         <div class="character-stats d-flex gap-3 mt-2">
                             <span class="experience-info" title="Total Experience">
-                                <i class="fas fa-star"></i> ${character.experience}
+                                <i class="fas fa-star"></i> ${character.character.experience}
                             </span>
                             <div class="stats-group">
                                 <span class="stat-win" title="Wins"><i class="fas fa-trophy"></i> ${character.wins}</span>
