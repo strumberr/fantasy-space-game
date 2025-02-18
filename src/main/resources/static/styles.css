@@ -1399,8 +1399,6 @@ body {
 .battle-column {
     width: 50px;
     background: rgba(10, 5, 23, 0.3) !important;
-    border-left: 1px solid rgba(107, 63, 160, 0.1) !important;
-    border-right: 1px solid rgba(107, 63, 160, 0.1) !important;
 }
 
 .battle-icon {
@@ -1423,4 +1421,16 @@ body {
 
 .battle-icon .fa-handshake {
     text-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+}
+
+.experience-gained small {
+    font-size: 0.7em;
+    opacity: 0.8;
+    margin-left: 1px;
+}
+
+.text-success small {
+    font-size: 0.7em;
+    opacity: 0.8;
+    margin-left: 1px;
 }

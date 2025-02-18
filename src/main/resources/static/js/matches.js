@@ -274,7 +274,7 @@ class MatchesTab {
                                                 </span>
                                                 <span>${match.challenger.name}</span>
                                             </div>
-                                            <span class="experience-gained">+${match.challenger.experienceGained}</span>
+                                            <span class="experience-gained">+${match.challenger.experienceGained}<small>xp</small></span>
                                         </div>
                                     </td>
                                     <td class="text-center battle-column">
@@ -294,7 +294,7 @@ class MatchesTab {
                                                 </span>
                                                 <span>${match.opponent.name}</span>
                                             </div>
-                                            <span class="experience-gained">+${match.opponent.experienceGained}</span>
+                                            <span class="experience-gained">+${match.opponent.experienceGained}<small>xp</small></span>
                                         </div>
                                     </td>
                                     <td class="text-center">
@@ -433,7 +433,7 @@ class MatchesTab {
                                         <i class="fas fa-star"></i> ${match.challenger.experienceTotal}
                                     </span>
                                     <span class="text-success" title="Experience Gained">
-                                        <i class="fas fa-plus"></i>${match.challenger.experienceGained}
+                                        <i class="fas fa-plus"></i>${match.challenger.experienceGained}<small>xp</small>
                                     </span>
                                 </div>
                             </div>
@@ -459,7 +459,7 @@ class MatchesTab {
                                         <i class="fas fa-star"></i> ${match.opponent.experienceTotal}
                                     </span>
                                     <span class="text-success" title="Experience Gained">
-                                        <i class="fas fa-plus"></i>${match.opponent.experienceGained}
+                                        <i class="fas fa-plus"></i>${match.opponent.experienceGained}<small>xp</small>
                                     </span>
                                 </div>
                             </div>
