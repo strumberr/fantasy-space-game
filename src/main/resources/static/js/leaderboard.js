@@ -19,26 +19,29 @@ class LeaderboardTab {
     }
 
     async loadLeaderboard() {
+        console.log('Loading leaderboard...');
         const leaderboardContainer = document.getElementById('leaderboardContent');
         try {
             leaderboardContainer.innerHTML = `
-                <div class="leaderboard-loading">
-                    <i class="fas fa-spinner fa-spin fa-2x"></i>
-                    <p>Loading rankings...</p>
+                <div class="loading-state text-center">
+                    <i class="fas fa-spinner fa-spin fa-3x"></i>
+                    <p class="mt-3">Loading rankings...</p>
                 </div>
             `;
 
-            this.rankings = await fetchWithAuth('/api/leaderboards');
+            const rankings = await fetchWithAuth('/api/leaderboards');
+            this.rankings = rankings;
             this.displayLeaderboard();
         } catch (error) {
             console.error('Error loading leaderboard:', error);
             leaderboardContainer.innerHTML = `
-                <div class="leaderboard-error">
+                <div class="empty-state">
                     <i class="fas fa-exclamation-circle fa-3x"></i>
                     <p>Failed to load leaderboard</p>
                     <small>${error.message}</small>
                 </div>
             `;
+            showToast(error.message, true);
         }
     }
 
