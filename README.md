@@ -13,67 +13,71 @@ Characters can be warriors or sorcerers and have different attributes based on t
 
 #### Endpoints
 
-`GET /api/characters` - Retrieves all characters.
-`GET /api/characters/{id}` - Retrieves a character by ID.
-`POST /api/characters` - Creates a new character.
+1. `GET /api/characters`
+  - Retrieves all characters. 
+  - Accepts query parameters to filter by class (WARRIOR, SORCERER), name or no filter:
+    - `class=(WARRIOR|SORCERER|null)`
+    - `name=(string|null)`
+  - Responds with:
+    ```json
+    {
+      "id": "1",
+      "name": "Aragorn",
+      "health": 100,
+      "attackPower": 50,
+      "stamina": 30,
+      "defensePower": 20,
+      "mana": null,
+      "healingPower": null,
+      "characterClass": "WARRIOR",
+      "level": "5",
+      "experience": 2000,
+      "shouldLevelUp": true,
+      "isOwner": true
+    }
+    ```
+    The characterClass object:
+    ```json
+    {
+      "CharacterClass": ["WARRIOR", "SORCERER"]
+    }
+    ```
+
+2. `GET /api/characters/{id}`
+   - Retrieves a character by ID.
+   - Responds with the same character object as above.
+
+3. `POST /api/characters`
+   - Creates a new character.
+   - Accepts body:
+     ```json
+     {
+     "name": "Aragorn",
+     "health": 100,
+     "attackPower": 50,
+     "stamina": 30,
+     "defensePower": 20,
+     "mana": null,
+     "healingPower": null,
+     "characterClass": "WARRIOR"
+     }
+     ```
+     ```json
+     {
+     "name": "Aragorn",
+     "health": 100,
+     "attackPower": 50,
+     "stamina": null,
+     "defensePower": null,
+     "mana": 30,
+     "healingPower": 20,
+     "characterClass": "SORCERER"
+     }
+     ```
+     
 `GET /api/characters/challengers` - Retrieves all challengers (characters owned by the current user).
 `GET /api/characters/opponents` - Retrieves all opponents (characters not owned by the current user).
 `PUT /api/characters/{id}` - Updates a character by ID (level up).
-
-#### Model
-
-**Character class**
-  ```json
-  {
-    "CharacterClass": ["WARRIOR", "SORCERER"]
-  }
-  ```
-
-**Create character request**
-  ```json
-  {
-    "name": "Aragorn",
-    "health": 100,
-    "attackPower": 50,
-    "stamina": 30,
-    "defensePower": 20,
-    "mana": null,
-    "healingPower": null,
-    "characterClass": "WARRIOR"
-  }
-  ```
-
-**Character response**
-  ```json
-  {
-    "id": "1",
-    "name": "Aragorn",
-    "health": 100,
-    "attackPower": 50,
-    "stamina": 30,
-    "defensePower": 20,
-    "mana": null,
-    "healingPower": null,
-    "characterClass": "WARRIOR",
-    "level": "5",
-    "experience": 2000,
-    "shouldLevelUp": true,
-    "isOwner": true
-  }
-  ```
-
-  ```json
-  {
-    "id": "1",
-    "name": "Aragorn",
-    "health": 120,
-    "attackPower": 55,
-    "stamina": 35,
-    "defensePower": 25,
-    "mana": null,
-    "healingPower": null
-  }
-  ```
 
 #### Functional Requirements
     - Characters should have health, attack power, level, and experience.
@@ -85,15 +89,30 @@ Characters can be warriors or sorcerers and have different attributes based on t
     - Challengers are characters owned by the current user.
     - Opponents are characters not owned by the current user.
 
+---
 ### Matches API
+
 #### Endpoints
-  GET /api/matches
-  POST /api/matches
+
+1. `GET /api/matches`
+    - Retrieves all matches.
+    - Response object:
+    
+2. `POST /api/matches`
+    - Creates a new match.
+    - Accepts body:
+      ```json
+      {
+        "rounds": 10,
+        "challengerId": 1,
+        "opponentId": 2
+      }
+      ```
 
 #### Model
   ```json
   {
-    "id": "1",
+    "id": 1,
     "name": "Aragorn",
     "characterClass": "WARRIOR",
     "level": "5",
@@ -103,13 +122,6 @@ Characters can be warriors or sorcerers and have different attributes based on t
   }
   ```
 
-  ```json
-  {
-    "rounds": 3,
-    "challengerId": "1",
-    "opponentId": "2"
-  }
-  ```
 
   ```json
   {

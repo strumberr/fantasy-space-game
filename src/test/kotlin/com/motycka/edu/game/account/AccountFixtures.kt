@@ -5,13 +5,13 @@ import com.motycka.edu.game.account.model.Account
 object AccountFixtures {
     val UNKNOWN = "unknown"
     val DEVELOPER = Account(
-        id = null,
+        id = 1L,
         name = "The Developer",
         username = "developer",
         password = "password"
     )
     val TESTER = Account(
-        id = null,
+        id = 2L,
         name = "The Tester",
         username = "tester",
         password = "password"

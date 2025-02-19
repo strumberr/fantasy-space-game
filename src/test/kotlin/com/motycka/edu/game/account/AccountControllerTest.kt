@@ -54,8 +54,7 @@ class AccountControllerTest {
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(accountRegistrationRequest))
-        )
-            .andExpect(status().isOk)
+        ).andExpect(status().isOk)
 
         verify { accountService.createAccount(account) }
     }

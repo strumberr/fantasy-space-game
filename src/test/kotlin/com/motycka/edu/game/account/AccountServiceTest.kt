@@ -26,15 +26,6 @@ class AccountServiceTest {
         every { accountRepository.selectByUsername(UNKNOWN) } returns null
     }
 
-//    @BeforeEach
-//    fun setUp() {
-//        SecurityContextHolder.setContext(
-//            SecurityContextHolder.createEmptyContext()
-//        )
-//        every { accountRepository.selectByUsername(DEVELOPER.username) } returns DEVELOPER
-//        every { accountRepository.selectByUsername(UNKNOWN) } returns null
-//    }
-
     @Test
     fun `getByUsername should return account when found`() {
         val result = accountService.getByUsername(DEVELOPER.username)
