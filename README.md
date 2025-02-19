@@ -242,6 +242,11 @@ The user management API allows users to register.
 - The database is initialized with data in the `data.sql` file.
 - You can update the provided basic model or use another database if preferred.
 
+## User Interface
+I have provided a simple user interface that consumes the API, you can use it to verify the API functionality.
+
+Access the UI at `http://localhost:8090/` (by default).
+
 ## General Requirements
 - Authentication is required to use the API.
 - Register your user using the user management API or add it to the database init script.
