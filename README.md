@@ -251,7 +251,7 @@ Access the UI at `http://localhost:8090/` (by default).
 - Authentication is required to use the API.
 - Register your user using the user management API or add it to the database init script.
 - Use a layered architecture (Controller, Service, Repository).
-- Use different classes to map objects between layers (DTOs), for example have dedicated classes for REST serializeec objects and database objects.
+- Use different classes to map objects between layers (DTOs), for example have dedicated classes for REST serialized objects and database objects.
 - Use a service layer to handle business logic.
 - Use a repository layer to handle database operations.
 - Use a controller layer to handle REST API requests.

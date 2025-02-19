@@ -322,23 +322,12 @@ class CharactersTab {
         const nextLevel = parseInt(character.level.split('_')[1]) + 1;
         this.currentLevelUpCharacter = character;
         
-        this.showPointsAssignmentDialog(character, nextLevel, async (properties) => {
+        this.showPointsAssignmentDialog(character, nextLevel, async (updateData) => {
             try {
+                // Send flat structure matching the backend expectations
                 const response = await fetchWithAuth(`/api/characters/${character.id}`, {
                     method: 'PUT',
-                    body: JSON.stringify({
-                        properties: {
-                            health: parseInt(properties.health),
-                            attackPower: parseInt(properties.attackPower),
-                            ...(character.characterClass === 'WARRIOR' ? {
-                                stamina: parseInt(properties.stamina),
-                                defensePower: parseInt(properties.defensePower)
-                            } : {
-                                mana: parseInt(properties.mana),
-                                healingPower: parseInt(properties.healingPower)
-                            })
-                        }
-                    })
+                    body: JSON.stringify(updateData)
                 });
                 
                 if (response.ok) {
@@ -474,7 +463,7 @@ class CharactersTab {
                 </div>
             `;
             
-            // Handle form submission
+            // Update form submission handler
             form.onsubmit = async (e) => {
                 e.preventDefault();
                 const formData = new FormData(form);
@@ -492,7 +481,6 @@ class CharactersTab {
 
                 try {
                     await callback(updateData);
-                    levelUpModal.hide();
                 } catch (error) {
                     showToast(error.message, true);
                 }

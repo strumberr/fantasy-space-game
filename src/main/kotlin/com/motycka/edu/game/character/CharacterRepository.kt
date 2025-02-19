@@ -96,7 +96,8 @@ class CharacterRepository(
                 is Warrior -> character.defensePower
                 else -> error("Unknown character class") // TODO
             },
-            character.experience
+            character.experience,
+            character.id
         ).firstOrNull()
     }
 
