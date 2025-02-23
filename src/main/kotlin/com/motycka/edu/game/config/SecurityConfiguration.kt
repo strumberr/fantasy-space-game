@@ -17,11 +17,11 @@ import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfiguration(private val userService: AccountService) {
+class SecurityConfiguration(private val accountService: AccountService) {
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        http
+        return http
             .csrf { it.disable() }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests { auth ->
@@ -33,13 +33,12 @@ class SecurityConfiguration(private val userService: AccountService) {
             .logout { logout ->
                 logout.permitAll()
             }
-
-        return http.build()
+            .build()
     }
 
     @Bean
     fun userDetailsService() = UserDetailsService { username ->
-        val user = userService.getByUsername(username)
+        val user = accountService.getByUsername(username)
             ?: throw UsernameNotFoundException("User not found")
 
         User.builder()
@@ -52,12 +51,4 @@ class SecurityConfiguration(private val userService: AccountService) {
 
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
-}
-
-
-fun main() {
-    val password = "heslo"
-    val passwordEncoder = BCryptPasswordEncoder()
-    val encodedPassword = passwordEncoder.encode(password)
-    println(encodedPassword)
 }
