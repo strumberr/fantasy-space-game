@@ -25,7 +25,6 @@ class CharacterService(
         val accountId = accountService.getCurrentAccountId()
         return characterRepository.selectCharacter(accountId, id)
             ?: error("Character not found.")
-
     }
 
 //            name = request.name,
@@ -119,7 +118,8 @@ class CharacterService(
     }
 
     fun findOpponentById(id: Long): Character? {
-        return characterRepository.selectCharacter(1, id)
+        val accountId = accountService.getCurrentAccountId()
+        return characterRepository.selectOpponentCharacter(accountId, id)
     }
 
     fun isOwner(characterId: Long, accountId: Long): Boolean {

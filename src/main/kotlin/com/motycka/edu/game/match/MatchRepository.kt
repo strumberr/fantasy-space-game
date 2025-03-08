@@ -32,9 +32,12 @@ class MatchRepository(
         ).firstOrNull()
     }
 
+
+
     fun getAllMatches(): List<Match> {
         return jdbcTemplate.query("SELECT * FROM match", ::rowMapper)
     }
+
 
     @Throws(SQLException::class)
     private fun rowMapper(rs: ResultSet, rowNum: Int): Match {
@@ -44,10 +47,10 @@ class MatchRepository(
             opponentId = rs.getLong("opponent_id"),
             matchOutcome = rs.getString("match_outcome"),
             challengerXp = rs.getInt("challenger_xp"),
-            opponentXp = rs.getInt("opponent_xp"),
-            rounds = getRoundsByMatchId(rs.getLong("id"))
+            opponentXp = rs.getInt("opponent_xp")
         )
     }
+
 
     data class Round(
         val round: Int,
@@ -83,9 +86,11 @@ class MatchRepository(
         )
     }
 
-//    updateLeaderboard(challengerId, challengerWinDelta, challengerLossDelta, challengerDrawDelta)
+
+    //    updateLeaderboard(challengerId, challengerWinDelta, challengerLossDelta, challengerDrawDelta)
     fun updateLeaderboard(characterId: Long, wins: Int, losses: Int, draws: Int) {
-        jdbcTemplate.update(
+        // Try updating an existing leaderboard row.
+        val rowsAffected = jdbcTemplate.update(
             """
                 UPDATE leaderboard 
                 SET wins = wins + ?, losses = losses + ?, draws = draws + ? 
@@ -96,6 +101,13 @@ class MatchRepository(
             draws,
             characterId
         )
+        // If no row was updated, insert a new leaderboard row.
+        if (rowsAffected == 0) {
+            jdbcTemplate.update(
+                "INSERT INTO leaderboard (character_id, wins, losses, draws) VALUES (?, ?, ?, ?)",
+                characterId, wins, losses, draws
+            )
+        }
     }
 
 }

@@ -6,12 +6,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import com.motycka.edu.game.character.model.Character
 
-// Request DTO for creating a match.
-data class MatchRequest(
-    val rounds: Int,
-    val challengerId: Long,
-    val opponentId: Long
-)
+
 
 // Simple response for POST /api/matches.
 data class MatchResponse(
@@ -55,7 +50,8 @@ data class GetMatchResponse(
     val id: String,
     val challenger: CharacterMatchInfo,
     val opponent: CharacterMatchInfo,
-    val rounds: List<RoundResponse>
+    val rounds: List<RoundResponse>,
+    val matchOutcome: String  // Added match outcome field
 )
 
 @RestController
@@ -67,13 +63,13 @@ class MatchController(
 ) {
 
     @PostMapping
-    fun createMatch(@RequestBody matchRequest: MatchRequest): ResponseEntity.BodyBuilder {
+    fun createMatch(@RequestBody matchRequest: MatchRequest): ResponseEntity<Match> {
         val match = matchService.createMatch(
             rounds = matchRequest.rounds,
             challengerId = matchRequest.challengerId,
             opponentId = matchRequest.opponentId
         )
-        return ResponseEntity.ok()
+        return ResponseEntity.ok(match)
 
     }
 
@@ -82,8 +78,8 @@ class MatchController(
         val matches = matchService.getAllMatches()
         val responses = matches.map { match ->
             val challengerCharacter: Character = characterService.getCharacterById(match.challengerId)
-            val opponentCharacter: Character = characterService.getCharacterById(match.opponentId)
-
+            val opponentCharacter: Character = characterService.findOpponentById(match.opponentId)
+                ?: error("Opponent not found for match id ${match.id}")
 
             val challengerInfo = CharacterMatchInfo(
                 id = challengerCharacter.id.toString(),
@@ -118,7 +114,8 @@ class MatchController(
                 id = match.id.toString(),
                 challenger = challengerInfo,
                 opponent = opponentInfo,
-                rounds = rounds
+                rounds = rounds,
+                matchOutcome = match.matchOutcome  // Include match outcome in response
             )
         }
         return ResponseEntity.ok(responses)

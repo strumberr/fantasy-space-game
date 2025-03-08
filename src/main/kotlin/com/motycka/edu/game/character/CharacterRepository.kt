@@ -66,6 +66,34 @@ class CharacterRepository(
         return query
     }
 
+    fun selectOpponentCharacter(accountId: Long, id: Long): Character? {
+        logger.debug { "Selecting character $id for account $accountId" }
+
+        print("Selecting character $id for account $accountId")
+
+        var query = jdbcTemplate.query(
+            "SELECT id, account_id, name, class AS character_class, health, attack, defense, stamina, healing, mana, experience FROM character WHERE account_id != ? AND id = ?",
+            ::rowMapper,
+            accountId,
+            id
+        ).firstOrNull()
+
+        return query
+    }
+
+    fun findById(id: Long): Character? {
+        val sql = """
+            SELECT
+                id, account_id, name, health, attack_power, stamina, defense_power, mana, healing_power,
+                character_class, level, experience, should_level_up
+            FROM characters
+            WHERE id = ?
+        """.trimIndent()
+
+        return jdbcTemplate.query(sql, ::rowMapper, id).firstOrNull()
+    }
+
+
     fun insertCharacters(accountId: Long, character: Character): Character? {
         logger.debug { "Inserting new character $character" }
         return jdbcTemplate.query(

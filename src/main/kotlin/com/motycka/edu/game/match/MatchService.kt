@@ -12,11 +12,35 @@ class MatchService(
     private val characterService: com.motycka.edu.game.character.CharacterService
 ) {
 
+
+//    data class MatchResponse(
+//    val id: Long,
+//    val challengerId: Long,
+//    val opponentId: Long,
+//    val matchOutcome: String,
+//    val challengerXp: Int,
+//    val opponentXp: Int
+//) {
+//    constructor(match: Match) : this(
+//        match.id,
+//        match.challengerId,
+//        match.opponentId,
+//        match.matchOutcome,
+//        match.challengerXp,
+//        match.opponentXp
+//    )
+//}
+
     fun createMatch(rounds: Int, challengerId: Long, opponentId: Long): Match {
 
-        val challenger = characterService.findById(challengerId)
+//        require challengerId and opponentId to be different
+        require(challengerId != opponentId) { "Challenger and opponent must be different characters." }
+
+
+
+        val challengerInfo = characterService.findById(challengerId)
             ?: error("Opponent not found.")
-        val opponent = characterService.findOpponentById(opponentId)
+        val opponentInfo = characterService.findOpponentById(opponentId)
             ?: error("Opponent not found.")
 
         val currentAccountId = accountService.getCurrentAccountId()
@@ -24,8 +48,8 @@ class MatchService(
 //            error("Current user does not own the challenger character.")
 //        }
 
-        val challengerInfo = characterService.getCharacter(challengerId)
-        val opponentInfo = characterService.getCharacter(opponentId)
+        println("challenger: $challengerInfo")
+        println("opponent: $opponentInfo")
 
         println("challengerInfo: $challengerInfo")
 
@@ -123,11 +147,13 @@ class MatchService(
             matchOutcome = outcome,
             challengerXp = challengerXP,
             opponentXp = opponentXP,
-            rounds = roundsList
         )
 
-        return matchRepository.insertMatch(currentAccountId, match)
+        matchRepository.insertMatch(currentAccountId, match)
             ?: error("Failed to insert match")
+
+
+        return match
 
 
     }
