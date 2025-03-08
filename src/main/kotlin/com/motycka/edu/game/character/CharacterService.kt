@@ -94,7 +94,6 @@ class CharacterService(
     }
 
 
-    //Retrieves all challengers (characters owned by the current user).
     fun getChallengers(): List<Character> {
         val accountId = accountService.getCurrentAccountId()
         return characterRepository.selectChallengers(accountId)
@@ -128,9 +127,7 @@ class CharacterService(
 
     fun addExperience(characterId: Long, xp: Int) {
         val character = getCharacter(characterId)
-        // Create an updated character object with increased experience.
         val updatedCharacter = character.copy(experience = character.experience + xp)
-        // You can call updateCharacter or create a dedicated updateExperience method.
         characterRepository.updateCharacter(character.accountId, updatedCharacter)
     }
 

@@ -4,7 +4,6 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import java.sql.ResultSet
 
-// Data class representing a joined row from the leaderboard and character tables.
 data class LeaderboardRow(
     val characterId: Long,
     val wins: Int,
@@ -40,7 +39,6 @@ class LeaderboardRepository(
             sql.append(" WHERE c.class = ?")
             params.add(filterClass)
         }
-        // Order by wins descending, then losses ascending, then draws ascending.
         sql.append(" ORDER BY lb.wins DESC, lb.losses ASC, lb.draws ASC")
         return jdbcTemplate.query(sql.toString(), { rs, _ -> rowMapper(rs) }, *params.toTypedArray())
     }

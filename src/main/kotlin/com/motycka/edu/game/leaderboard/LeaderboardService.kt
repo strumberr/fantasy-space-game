@@ -19,19 +19,15 @@ class LeaderboardService(
     private val accountService: AccountService
 ) {
     fun getLeaderboard(filterClass: String?): List<LeaderboardResponse> {
-        // Convert provided class filter to uppercase to match stored values.
         val normalizedFilter = filterClass?.uppercase()
         val currentAccountId = accountService.getCurrentAccountId()
         val rows = leaderboardRepository.getLeaderboard(normalizedFilter)
         var position = 1
         return rows.map { row ->
-            // Calculate level and determine if the character should level up.
             val level = (row.experience / 400).toString()
             val shouldLevelUp = row.experience % 400 == 0
-            // Determine if the character belongs to the current account.
             val isOwner = row.accountId == currentAccountId
 
-            // Reuse the existing CharacterResponse model.
             val characterResponse = CharacterResponse(
                 id = row.characterId.toString(),
                 name = row.name,

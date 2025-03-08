@@ -8,51 +8,11 @@ import com.motycka.edu.game.character.model.Character
 
 
 
-// Simple response for POST /api/matches.
-data class MatchResponse(
-    val id: Long,
-    val challengerId: Long,
-    val opponentId: Long,
-    val matchOutcome: String,
-    val challengerXp: Int,
-    val opponentXp: Int
-) {
-    constructor(match: Match) : this(
-        match.id,
-        match.challengerId,
-        match.opponentId,
-        match.matchOutcome,
-        match.challengerXp,
-        match.opponentXp
-    )
-}
 
-// Detailed response for GET /api/matches.
-data class CharacterMatchInfo(
-    val id: String,
-    val name: String,
-    val characterClass: String,
-    val level: String,
-    val experienceTotal: Int,
-    val experienceGained: Int,
-    val isVictor: Boolean
-)
 
-data class RoundResponse(
-    val round: Int,
-    val characterId: String,
-    val healthDelta: Int,
-    val staminaDelta: Int,
-    val manaDelta: Int
-)
 
-data class GetMatchResponse(
-    val id: String,
-    val challenger: CharacterMatchInfo,
-    val opponent: CharacterMatchInfo,
-    val rounds: List<RoundResponse>,
-    val matchOutcome: String  // Added match outcome field
-)
+
+
 
 @RestController
 @RequestMapping("/api/matches")
@@ -115,7 +75,7 @@ class MatchController(
                 challenger = challengerInfo,
                 opponent = opponentInfo,
                 rounds = rounds,
-                matchOutcome = match.matchOutcome  // Include match outcome in response
+                matchOutcome = match.matchOutcome
             )
         }
         return ResponseEntity.ok(responses)
