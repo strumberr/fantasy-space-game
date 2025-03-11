@@ -4,7 +4,6 @@ import com.motycka.edu.game.account.AccountService
 import com.motycka.edu.game.character.CharacterResponse
 import org.springframework.stereotype.Service
 
-// Response DTO for the leaderboard entry.
 data class LeaderboardResponse(
     val position: Int,
     val character: CharacterResponse,

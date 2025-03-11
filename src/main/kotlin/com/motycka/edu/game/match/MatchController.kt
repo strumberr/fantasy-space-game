@@ -7,13 +7,6 @@ import org.springframework.web.bind.annotation.*
 import com.motycka.edu.game.character.model.Character
 
 
-
-
-
-
-
-
-
 @RestController
 @RequestMapping("/api/matches")
 class MatchController(

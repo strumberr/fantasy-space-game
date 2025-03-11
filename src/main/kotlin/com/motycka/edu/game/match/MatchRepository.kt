@@ -51,7 +51,6 @@ class MatchRepository(
         )
     }
 
-
     data class Round(
         val round: Int,
         val characterId: Long,
@@ -87,9 +86,7 @@ class MatchRepository(
     }
 
 
-    //    updateLeaderboard(challengerId, challengerWinDelta, challengerLossDelta, challengerDrawDelta)
     fun updateLeaderboard(characterId: Long, wins: Int, losses: Int, draws: Int) {
-        // Try updating an existing leaderboard row.
         val rowsAffected = jdbcTemplate.update(
             """
                 UPDATE leaderboard 
@@ -101,7 +98,6 @@ class MatchRepository(
             draws,
             characterId
         )
-        // If no row was updated, insert a new leaderboard row.
         if (rowsAffected == 0) {
             jdbcTemplate.update(
                 "INSERT INTO leaderboard (character_id, wins, losses, draws) VALUES (?, ?, ?, ?)",
